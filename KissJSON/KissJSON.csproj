@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Authors>ChengShaoRong</Authors>
+    <Description>This is a most simple and stupid JSON for .NET, it's the unique one SUPPORT the class in hot upate script(C#Like) in Unity3D.
+
+这个是最简单易用.NET可用的JSON, 它是Unity3D的热更新方案C#Like的唯一可用的JSON.</Description>
+    <Copyright>Copyright © 2022-2023 RongRong</Copyright>
+    <PackageLicenseFile>README.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/ChengShaoRong/KissJSON</PackageProjectUrl>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.0.2</Version>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
