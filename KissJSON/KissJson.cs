@@ -1844,12 +1844,12 @@ namespace CSharpLike
                 {
                     try
                     {
-                        long v = Convert.ToInt64(new string(mCharBuff, start, end - start + 1));
-                        if (v <= int.MaxValue && v >= int.MinValue)
-                            return (int)v;
-                        else
-                            return v;
-                    }
+                    long v = Convert.ToInt64(new string(mCharBuff, start, end - start + 1));
+                    if (v <= int.MaxValue && v >= int.MinValue)
+                        return (int)v;
+                    else
+                        return v;
+                }
                     catch
                     {
                         ulong v = Convert.ToUInt64(new string(mCharBuff, start, end - start + 1));
