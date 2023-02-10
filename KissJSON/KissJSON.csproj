@@ -9,11 +9,12 @@
     <Copyright>Copyright © 2022-2023 RongRong</Copyright>
     <PackageLicenseFile>README.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/ChengShaoRong/KissJSON</PackageProjectUrl>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <Version>1.0.3</Version>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
+    <PackageTags>JSON,C#Like</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
