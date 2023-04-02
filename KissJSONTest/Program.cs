@@ -146,12 +146,8 @@ namespace KissJSONTest
             data = KissJson.ToJSONData(testJsonData);
 
             //format JSON
-            Console.WriteLine(data.ToJson(true));
-            JSONData jsonList = JSONData.NewList();
-            jsonList.Add(data);
-            jsonList.Add(data);
-            Console.WriteLine(jsonList.ToJson(true));
-            Console.WriteLine(jsonList.ToJson());
+            Console.WriteLine(data.ToJson(true));//Formatting JSON strings for better readability
+            Console.WriteLine(data.ToJson());//Not formatting JSON strings, poor readability, but JSON strings are short, more suitable for transmission
 
             Console.ReadKey();
         }

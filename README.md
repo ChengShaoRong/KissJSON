@@ -212,6 +212,13 @@ Package had been uploaded to Nuget, dependent library: **.NET Standard 2.0**. Yo
 	data = KissJson.ToJSONData(testJsonData);
 ```
 
+```
+>*  Format JSON string
+```
+	Console.WriteLine(data.ToJson(true));//Formatting JSON strings for better readability
+	Console.WriteLine(data.ToJson());//Not formatting JSON strings, poor readability, but JSON strings are short, more suitable for transmission
+```
+
 ***
 
 * **可与JSONData之间互转的内置类型**
@@ -407,4 +414,9 @@ Package had been uploaded to Nuget, dependent library: **.NET Standard 2.0**. Yo
 >*  类/结构体 -> JSONData
 ```
 	data = KissJson.ToJSONData(testJsonData);
+```
+>*  格式化JSON字符串
+```
+	Console.WriteLine(data.ToJson(true));//格式化JSON字符串,更好的可读性
+	Console.WriteLine(data.ToJson());//不格式化JSON字符串,可读性差但JSON字符串很短,更适合传输
 ```

@@ -22,6 +22,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyProductAttribute("KissJSON")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KissJSON")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.4.0")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("RepositoryUrl", "https://github.com/ChengShaoRong/KissJSON.git")]
 
 // 由 MSBuild WriteCodeFragment 类生成。
 
