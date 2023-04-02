@@ -212,7 +212,6 @@ Package had been uploaded to Nuget, dependent library: **.NET Standard 2.0**. Yo
 	data = KissJson.ToJSONData(testJsonData);
 ```
 
-```
 >*  Format JSON string
 ```
 	Console.WriteLine(data.ToJson(true));//Formatting JSON strings for better readability
