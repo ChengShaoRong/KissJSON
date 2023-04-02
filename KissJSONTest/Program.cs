@@ -145,6 +145,14 @@ namespace KissJSONTest
             //class/struct => JSONData
             data = KissJson.ToJSONData(testJsonData);
 
+            //format JSON
+            Console.WriteLine(data.ToJson(true));
+            JSONData jsonList = JSONData.NewList();
+            jsonList.Add(data);
+            jsonList.Add(data);
+            Console.WriteLine(jsonList.ToJson(true));
+            Console.WriteLine(jsonList.ToJson());
+
             Console.ReadKey();
         }
     }

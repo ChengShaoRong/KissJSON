@@ -456,104 +456,250 @@ namespace CSharpLike
                     return "null";
             }
         }
+        static string[] spaces = {
+            "",
+            "    ",
+            "        ",
+            "            ",
+            "                ",
+            "                    ",
+            "                        ",
+            "                            ",
+            "                                ",
+            "                                    ",
+            "                                        ",
+            "                                            ",
+            "                                                ",
+            "                                                    ",
+            "                                                        ",
+            "                                                            ",
+            "                                                                ",
+            "                                                                    ",
+            "                                                                        ",
+            "                                                                            ",
+            "                                                                                "};
         /// <summary>
         /// Convert this JSONData to JSON string had deal with special string '\' '"' '\n' '\r' '\t' '\b' '\f'. 
         /// </summary>
-        public string ToJson()
+        /// <param name="bFormat">Format the JSON string, make it more readability. default is false</param>
+        /// <param name="depth">Internal use, you can ignore it</param>
+        /// <returns></returns>
+        public string ToJson(bool bFormat = false, int depth = 0)
         {
-            switch (dataType)
+            if (bFormat)
             {
-                case DataType.DataTypeDictionary:
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("{");
-                        foreach (var item in dictValue)
+                switch (dataType)
+                {
+                    case DataType.DataTypeDictionary:
                         {
-                            if (item.Value == null)
-                                sb.AppendFormat("\"{0}\":null,", item.Key);
-                            else if (item.Value.dataType == DataType.DataTypeString)
+                            string space;
+                            if (depth < 0)
+                                space = spaces[0];
+                            else if (depth > 20)
+                                space = spaces[20];
+                            else
+                                space = spaces[depth];
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("{\n");
+                            foreach (var item in dictValue)
+                            {
+                                if (item.Value == null)
+                                    sb.Append($"{space}    \"{item.Key}\": null,\n");
+                                else if (item.Value.dataType == DataType.DataTypeString)
+                                {
+                                    if (item.Value == null)
+                                        sb.Append($"{space}    \"{item.Key}\": null,\n");
+                                    else
+                                        sb.Append($"{space}    \"{item.Key}\": \"{item.Value.ToJson(bFormat, depth + 1)}\",\n");
+                                }
+                                else
+                                    sb.Append($"{space}    \"{item.Key}\": {item.Value.ToJson(bFormat, depth + 1)},\n");
+                            }
+                            if (dictValue.Count > 0)
+                                sb.Remove(sb.Length - 2, 2);
+                            sb.Append("\n");
+                            sb.Append(space);
+                            sb.Append("}");
+                            return sb.ToString();
+                        }
+                    case DataType.DataTypeList:
+                        {
+                            string space;
+                            if (depth < 0)
+                                space = spaces[0];
+                            else if (depth > 20)
+                                space = spaces[20];
+                            else
+                                space = spaces[depth];
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("[\n");
+                            foreach (var item in listValue)
+                            {
+                                if (item == null)
+                                    sb.Append($"{space}    null,\n");
+                                else if (item.dataType == DataType.DataTypeString)
+                                    sb.Append($"{space}    \"{item.ToJson(bFormat, depth + 1)}\",\n");
+                                else
+                                {
+                                    sb.Append(space);
+                                    sb.Append("    ");
+                                    sb.Append(item.ToJson(bFormat, depth + 1));
+                                    sb.Append(",\n");
+                                }
+                            }
+                            if (listValue.Count > 0)
+                                sb.Remove(sb.Length - 2, 2);
+                            sb.Append("\n");
+                            sb.Append(space);
+                            sb.Append("]");
+                            return sb.ToString();
+                        }
+                    case DataType.DataTypeBoolean:
+                        return bValue ? "true" : "false";
+                    case DataType.DataTypeString:
+                        {
+                            if (strValue == null)
+                                return "null";
+                            StringBuilder sb = new StringBuilder(strValue.Length * 2);
+                            char[] buff = strValue.ToCharArray();
+                            int length = buff.Length;
+                            char c;
+                            for (int i = 0; i < length; i++)
+                            {
+                                c = buff[i];
+                                switch (c)
+                                {
+                                    case '\"': sb.Append("\\\""); break;
+                                    case '\n': sb.Append("\\\n"); break;
+                                    case '\r': sb.Append("\\\r"); break;
+                                    case '\b': sb.Append("\\\b"); break;
+                                    case '\t': sb.Append("\\\t"); break;
+                                    case '\f': sb.Append("\\\f"); break;
+                                    case '\\': sb.Append("\\\\"); break;
+                                    default: sb.Append(c); break;
+                                }
+                            }
+                            return sb.ToString();
+                        }
+                    case DataType.DataTypeInt:
+                        return iValue.ToString();
+                    case DataType.DataTypeLong:
+                        return lValue.ToString();
+                    case DataType.DataTypeULong:
+                        return ulValue.ToString();
+                    case DataType.DataTypeDouble:
+                        return dValue.ToString();
+                    case DataType.DataTypeBooleanNullable:
+                        return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
+                    case DataType.DataTypeIntNullable:
+                        return iValueNullable == null ? "null" : iValueNullable.Value.ToString();
+                    case DataType.DataTypeLongNullable:
+                        return lValueNullable == null ? "null" : lValueNullable.Value.ToString();
+                    case DataType.DataTypeULongNullable:
+                        return ulValueNullable == null ? "null" : ulValueNullable.Value.ToString();
+                    case DataType.DataTypeDoubleNullable:
+                        return dValueNullable == null ? "null" : dValueNullable.Value.ToString();
+                    default:
+                        return "null";
+                }
+            }
+            else
+            {
+
+                switch (dataType)
+                {
+                    case DataType.DataTypeDictionary:
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("{");
+                            foreach (var item in dictValue)
                             {
                                 if (item.Value == null)
                                     sb.AppendFormat("\"{0}\":null,", item.Key);
+                                else if (item.Value.dataType == DataType.DataTypeString)
+                                {
+                                    if (item.Value == null)
+                                        sb.AppendFormat("\"{0}\":null,", item.Key);
+                                    else
+                                        sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value.ToJson());
+                                }
                                 else
-                                    sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value.ToJson());
+                                    sb.AppendFormat("\"{0}\":{1},", item.Key, item.Value.ToJson());
                             }
-                            else
-                                sb.AppendFormat("\"{0}\":{1},", item.Key, item.Value.ToJson());
+                            if (sb.Length > 1)
+                                sb.Remove(sb.Length - 1, 1);
+                            sb.Append("}");
+                            return sb.ToString();
                         }
-                        if (sb.Length > 1)
-                            sb.Remove(sb.Length - 1, 1);
-                        sb.Append("}");
-                        return sb.ToString();
-                    }
-                case DataType.DataTypeList:
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("[");
-                        foreach (var item in listValue)
+                    case DataType.DataTypeList:
                         {
-                            if (item == null)
-                                sb.Append("null,");
-                            else if (item.dataType == DataType.DataTypeString)
-                                sb.AppendFormat("\"{0}\",", item.ToJson());
-                            else
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("[");
+                            foreach (var item in listValue)
                             {
-                                sb.Append(item.ToJson());
-                                sb.Append(",");
+                                if (item == null)
+                                    sb.Append("null,");
+                                else if (item.dataType == DataType.DataTypeString)
+                                    sb.AppendFormat("\"{0}\",", item.ToJson());
+                                else
+                                {
+                                    sb.Append(item.ToJson());
+                                    sb.Append(",");
+                                }
                             }
+                            if (sb.Length > 1)
+                                sb.Remove(sb.Length - 1, 1);
+                            sb.Append("]");
+                            return sb.ToString();
                         }
-                        if (sb.Length > 1)
-                            sb.Remove(sb.Length - 1, 1);
-                        sb.Append("]");
-                        return sb.ToString();
-                    }
-                case DataType.DataTypeBoolean:
-                    return bValue ? "true" : "false";
-                case DataType.DataTypeString:
-                    {
-                        if (strValue == null)
-                            return "null";
-                        StringBuilder sb = new StringBuilder(strValue.Length * 2);
-                        char[] buff = strValue.ToCharArray();
-                        int length = buff.Length;
-                        char c;
-                        for (int i = 0; i < length; i++)
+                    case DataType.DataTypeBoolean:
+                        return bValue ? "true" : "false";
+                    case DataType.DataTypeString:
                         {
-                            c = buff[i];
-                            switch (c)
+                            if (strValue == null)
+                                return "null";
+                            StringBuilder sb = new StringBuilder(strValue.Length * 2);
+                            char[] buff = strValue.ToCharArray();
+                            int length = buff.Length;
+                            char c;
+                            for (int i = 0; i < length; i++)
                             {
-                                case '\"': sb.Append("\\\""); break;
-                                case '\n': sb.Append("\\\n"); break;
-                                case '\r': sb.Append("\\\r"); break;
-                                case '\b': sb.Append("\\\b"); break;
-                                case '\t': sb.Append("\\\t"); break;
-                                case '\f': sb.Append("\\\f"); break;
-                                case '\\': sb.Append("\\\\"); break;
-                                default: sb.Append(c); break;
+                                c = buff[i];
+                                switch (c)
+                                {
+                                    case '\"': sb.Append("\\\""); break;
+                                    case '\n': sb.Append("\\\n"); break;
+                                    case '\r': sb.Append("\\\r"); break;
+                                    case '\b': sb.Append("\\\b"); break;
+                                    case '\t': sb.Append("\\\t"); break;
+                                    case '\f': sb.Append("\\\f"); break;
+                                    case '\\': sb.Append("\\\\"); break;
+                                    default: sb.Append(c); break;
+                                }
                             }
+                            return sb.ToString();
                         }
-                        return sb.ToString();
-                    }
-                case DataType.DataTypeInt:
-                    return iValue.ToString();
-                case DataType.DataTypeLong:
-                    return lValue.ToString();
-                case DataType.DataTypeULong:
-                    return ulValue.ToString();
-                case DataType.DataTypeDouble:
-                    return dValue.ToString();
-                case DataType.DataTypeBooleanNullable:
-                    return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
-                case DataType.DataTypeIntNullable:
-                    return iValueNullable == null ? "null" : iValueNullable.Value.ToString();
-                case DataType.DataTypeLongNullable:
-                    return lValueNullable == null ? "null" : lValueNullable.Value.ToString();
-                case DataType.DataTypeULongNullable:
-                    return ulValueNullable == null ? "null" : ulValueNullable.Value.ToString();
-                case DataType.DataTypeDoubleNullable:
-                    return dValueNullable == null ? "null" : dValueNullable.Value.ToString();
-                default:
-                    return "null";
+                    case DataType.DataTypeInt:
+                        return iValue.ToString();
+                    case DataType.DataTypeLong:
+                        return lValue.ToString();
+                    case DataType.DataTypeULong:
+                        return ulValue.ToString();
+                    case DataType.DataTypeDouble:
+                        return dValue.ToString();
+                    case DataType.DataTypeBooleanNullable:
+                        return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
+                    case DataType.DataTypeIntNullable:
+                        return iValueNullable == null ? "null" : iValueNullable.Value.ToString();
+                    case DataType.DataTypeLongNullable:
+                        return lValueNullable == null ? "null" : lValueNullable.Value.ToString();
+                    case DataType.DataTypeULongNullable:
+                        return ulValueNullable == null ? "null" : ulValueNullable.Value.ToString();
+                    case DataType.DataTypeDoubleNullable:
+                        return dValueNullable == null ? "null" : dValueNullable.Value.ToString();
+                    default:
+                        return "null";
+                }
             }
         }
 
