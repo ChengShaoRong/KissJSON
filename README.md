@@ -216,6 +216,74 @@ Package had been uploaded to Nuget, dependent library: **.NET Standard 2.0**. Yo
 ```
 	Console.WriteLine(data.ToJson(true));//Formatting JSON strings for better readability
 	Console.WriteLine(data.ToJson());//Not formatting JSON strings, poor readability, but JSON strings are short, more suitable for transmission
+
+Formatting JSON string:
+{
+    "i": 11,
+    "j": 1,
+    "z": 2,
+    "k": [
+        3,
+        null,
+        7
+    ],
+    "datas": {
+        "aa": {
+            "id": 1,
+            "name": "aaa",
+            "v2": {
+                "x": 1,
+                "y": 2
+            },
+            "info": [
+                "a",
+                "xd",
+                "dt"
+            ],
+            "maps": {
+                "x": 1,
+                "y": 2
+            }
+        },
+        "bb": {
+            "id": 2,
+            "name": "bbb",
+            "v2": {
+                "x": 3,
+                "y": 4
+            },
+            "info": [
+                "x",
+                "x3d",
+                "ddt"
+            ],
+            "maps": {
+                "x": 2,
+                "y": 3
+            }
+        }
+    },
+    "data": {
+        "id": 3,
+        "name": "ccc",
+        "v2": {
+            "x": 3,
+            "y": 1
+        },
+        "info": [
+            "ya",
+            "xyd",
+            "drt"
+        ],
+        "maps": {
+            "x": 3,
+            "y": 4
+        }
+    }
+}
+Not formatting JSON string:
+{"i":11,"j":1,"z":2,"k":[3,null,7],"datas":{"aa":{"id":1,"name":"aaa","v2":{"x":1,"y":2},"info":["a","xd","dt"],"maps":{"x":1,"y":2}},"bb":{"id":2,"name":"bbb","v2":{"x":3,"y":4},"info":["x","x3d","ddt"],"maps":{"x":2,"y":3}}},"data":{"id":3,"name":"ccc","v2":{"x":3,"y":1},"info":["ya","xyd","drt"],"maps":{"x":3,"y":4}}}
+
 ```
 
 ***
@@ -418,4 +486,72 @@ Package had been uploaded to Nuget, dependent library: **.NET Standard 2.0**. Yo
 ```
 	Console.WriteLine(data.ToJson(true));//格式化JSON字符串,更好的可读性
 	Console.WriteLine(data.ToJson());//不格式化JSON字符串,可读性差但JSON字符串很短,更适合传输
+
+格式化JSON字符串为:
+{
+    "i": 11,
+    "j": 1,
+    "z": 2,
+    "k": [
+        3,
+        null,
+        7
+    ],
+    "datas": {
+        "aa": {
+            "id": 1,
+            "name": "aaa",
+            "v2": {
+                "x": 1,
+                "y": 2
+            },
+            "info": [
+                "a",
+                "xd",
+                "dt"
+            ],
+            "maps": {
+                "x": 1,
+                "y": 2
+            }
+        },
+        "bb": {
+            "id": 2,
+            "name": "bbb",
+            "v2": {
+                "x": 3,
+                "y": 4
+            },
+            "info": [
+                "x",
+                "x3d",
+                "ddt"
+            ],
+            "maps": {
+                "x": 2,
+                "y": 3
+            }
+        }
+    },
+    "data": {
+        "id": 3,
+        "name": "ccc",
+        "v2": {
+            "x": 3,
+            "y": 1
+        },
+        "info": [
+            "ya",
+            "xyd",
+            "drt"
+        ],
+        "maps": {
+            "x": 3,
+            "y": 4
+        }
+    }
+}
+不格式化JSON字符串:
+{"i":11,"j":1,"z":2,"k":[3,null,7],"datas":{"aa":{"id":1,"name":"aaa","v2":{"x":1,"y":2},"info":["a","xd","dt"],"maps":{"x":1,"y":2}},"bb":{"id":2,"name":"bbb","v2":{"x":3,"y":4},"info":["x","x3d","ddt"],"maps":{"x":2,"y":3}}},"data":{"id":3,"name":"ccc","v2":{"x":3,"y":1},"info":["ya","xyd","drt"],"maps":{"x":3,"y":4}}}
+
 ```
