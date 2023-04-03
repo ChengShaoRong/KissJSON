@@ -149,6 +149,13 @@ namespace KissJSONTest
             Console.WriteLine(data.ToJson(true));//Formatting JSON strings for better readability
             Console.WriteLine(data.ToJson());//Not formatting JSON strings, poor readability, but JSON strings are short, more suitable for transmission
 
+            //Deep clone JSONData
+            JSONData clone = JSONData.DeepClone(data);//Deep clone JSONData, 'clone' object is not the same object with 'data'.
+            JSONData notClone = data;  //Just set value, 'notClone' is alias of the 'data', they are the same object.
+            data["i"] = 100;//Modify the 'data' object, that will not effect the 'clone' object.
+            Console.WriteLine(clone.ToJson());
+            Console.WriteLine(notClone.ToJson());
+
             Console.ReadKey();
         }
     }

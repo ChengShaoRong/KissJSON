@@ -286,6 +286,15 @@ Not formatting JSON string:
 
 ```
 
+>*  Deep clone JSONData object
+```
+	JSONData clone = JSONData.DeepClone(data);//Deep clone JSONData, 'clone' object is not the same object with 'data'.
+	JSONData notClone = data;  //Just set value, 'notClone' is alias of the 'data', they are the same object.
+	data["i"] = 100;//Modify the 'data' object, that will not effect the 'clone' object.
+	Console.WriteLine(clone.ToJson());
+	Console.WriteLine(notClone.ToJson());
+```
+
 ***
 
 * **可与JSONData之间互转的内置类型**
@@ -554,4 +563,13 @@ Not formatting JSON string:
 不格式化JSON字符串:
 {"i":11,"j":1,"z":2,"k":[3,null,7],"datas":{"aa":{"id":1,"name":"aaa","v2":{"x":1,"y":2},"info":["a","xd","dt"],"maps":{"x":1,"y":2}},"bb":{"id":2,"name":"bbb","v2":{"x":3,"y":4},"info":["x","x3d","ddt"],"maps":{"x":2,"y":3}}},"data":{"id":3,"name":"ccc","v2":{"x":3,"y":1},"info":["ya","xyd","drt"],"maps":{"x":3,"y":4}}}
 
+```
+
+>*  深复制JSONData
+```
+	JSONData clone = JSONData.DeepClone(data);//深复制JSONData对象, 'clone'和'data'是两个独立的对象.
+	JSONData notClone = data;  //仅仅是复制,相当于'notClone'是'data'的别名,它们是同一个对象.
+	data["i"] = 100;//修改'data'对象,不会影响到'clone'对象的数值.
+	Console.WriteLine(clone.ToJson());
+	Console.WriteLine(notClone.ToJson());
 ```
