@@ -166,13 +166,57 @@ namespace CSharpLike
                     case DataType.DataTypeBoolean: return typeof(bool);
                     case DataType.DataTypeInt: return typeof(int);
                     case DataType.DataTypeLong: return typeof(long);
+                    case DataType.DataTypeULong: return typeof(ulong);
                     case DataType.DataTypeDouble: return typeof(double);
                     case DataType.DataTypeBooleanNullable: return typeof(bool?);
                     case DataType.DataTypeIntNullable: return typeof(int?);
                     case DataType.DataTypeLongNullable: return typeof(long?);
+                    case DataType.DataTypeULongNullable: return typeof(ulong?);
                     case DataType.DataTypeDoubleNullable: return typeof(double?);
                     default: return null;
                 }
+            }
+        }
+        /// <summary>
+        /// Get a deep clone JSONData object
+        /// </summary>
+        /// <param name="sourceJsonData">The source JSONData object</param>
+        public static JSONData DeepClone(JSONData sourceJsonData)
+        {
+            if (sourceJsonData == null)
+                return null;
+            switch(sourceJsonData.dataType)
+            {
+                case DataType.DataTypeDictionary:
+                    {
+                        JSONData json = NewDictionary();
+                        foreach(var one in sourceJsonData.Value as Dictionary<string, JSONData>)
+                        {
+                            json.Add(one.Key, DeepClone(one.Value));
+                        }
+                        return json;
+                    }
+                case DataType.DataTypeList:
+                    {
+                        JSONData json = NewList();
+                        foreach (JSONData one in sourceJsonData.Value as List<JSONData>)
+                        {
+                            json.Add(DeepClone(one));
+                        }
+                        return json;
+                    }
+                case DataType.DataTypeString: return sourceJsonData.strValue;
+                case DataType.DataTypeBoolean: return sourceJsonData.bValue;
+                case DataType.DataTypeInt: return sourceJsonData.iValue;
+                case DataType.DataTypeLong: return sourceJsonData.lValue;
+                case DataType.DataTypeULong: return sourceJsonData.ulValue;
+                case DataType.DataTypeDouble: return sourceJsonData.dValue;
+                case DataType.DataTypeBooleanNullable: return sourceJsonData.bValueNullable;
+                case DataType.DataTypeIntNullable: return sourceJsonData.iValueNullable;
+                case DataType.DataTypeLongNullable: return sourceJsonData.ulValueNullable;
+                case DataType.DataTypeULongNullable: return sourceJsonData.ulValueNullable;
+                case DataType.DataTypeDoubleNullable: return sourceJsonData.dValueNullable;
+                default: return null;
             }
         }
         /// <summary>
