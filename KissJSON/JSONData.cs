@@ -16,21 +16,66 @@ namespace CSharpLike
     /// </summary>
     public sealed class JSONData
     {
+        /// <summary>
+        /// Data type of the JSON
+        /// </summary>
         public enum DataType : sbyte
         {
+            /// <summary>
+            /// This JSON object is null
+            /// </summary>
             DataTypeNull,
+            /// <summary>
+            /// Is Dictionary type
+            /// </summary>
             DataTypeDictionary,
+            /// <summary>
+            /// Is List type
+            /// </summary>
             DataTypeList,
+            /// <summary>
+            /// Value type is string
+            /// </summary>
             DataTypeString,
+            /// <summary>
+            /// Value type is boolean
+            /// </summary>
             DataTypeBoolean,
+            /// <summary>
+            /// IValue type is a nt
+            /// </summary>
             DataTypeInt,
+            /// <summary>
+            /// Value type is long
+            /// </summary>
             DataTypeLong,
+            /// <summary>
+            /// Value type is ulong
+            /// </summary>
             DataTypeULong,
+            /// <summary>
+            /// Value type is double
+            /// </summary>
             DataTypeDouble,
+            /// <summary>
+            /// Value type is nullable boolean
+            /// </summary>
             DataTypeBooleanNullable,
+            /// <summary>
+            /// Value type is nullable int
+            /// </summary>
             DataTypeIntNullable,
+            /// <summary>
+            /// Value type is nullable long
+            /// </summary>
             DataTypeLongNullable,
+            /// <summary>
+            /// Value type is nullable ulong
+            /// </summary>
             DataTypeULongNullable,
+            /// <summary>
+            /// Value type is nullable double
+            /// </summary>
             DataTypeDoubleNullable,
         }
         /// <summary>
@@ -65,7 +110,8 @@ namespace CSharpLike
         /// <summary>
         /// Create a JSONData with packet type for network packet, that use in hot update script.
         /// </summary>
-        /// <param name="packetType">Add to JSON object with key 'packetType'</param>
+        /// <param name="type">The type of the Packet</param>
+        /// <param name="value">The value of 'packetType'</param>
         public static JSONData NewPacket(Type type, object value)
         {
             JSONData data = new JSONData();
@@ -383,6 +429,9 @@ namespace CSharpLike
             value.dataType = DataType.DataTypeNull;
             return false;
         }
+        /// <summary>
+        /// The data type of this object 
+        /// </summary>
         public DataType dataType;
         /// <summary>
         /// Get extern object from this JSONData
@@ -800,9 +849,10 @@ namespace CSharpLike
             throw new Exception("JSONData ConventTo(object obj) only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/DateTime(or with Nullable type '?')." + obj.ToString());
         }
         /// <summary>
-        /// JSONData Convert To object.
+        /// JSONData Convert To target object.
         /// It's suppose as internal use.
         /// </summary>
+        /// <param name="targetType">The target Type</param>
         /// <param name="obj">JSONData</param>
         /// <returns>only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/byte?/sbyte?/short?/ushort?/int?/uint?/long?/ulong?/bool?</returns>
         public static object ConvertTo(Type targetType, JSONData obj)
@@ -872,6 +922,9 @@ namespace CSharpLike
             }
             return obj;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;byte&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<byte> value)
         {
             JSONData data = new JSONData();
@@ -881,6 +934,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;byte&gt;
+        /// </summary>
         public static implicit operator List<byte>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -890,6 +946,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;sbyte&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<sbyte> value)
         {
             JSONData data = new JSONData();
@@ -899,6 +958,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;sbyte&gt;
+        /// </summary>
         public static implicit operator List<sbyte>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -908,6 +970,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;short&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<short> value)
         {
             JSONData data = new JSONData();
@@ -917,6 +982,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;short&gt;
+        /// </summary>
         public static implicit operator List<short>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -926,6 +994,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;ushort&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<ushort> value)
         {
             JSONData data = new JSONData();
@@ -935,6 +1006,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;ushort&gt;
+        /// </summary>
         public static implicit operator List<ushort>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -944,6 +1018,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;int&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<int> value)
         {
             JSONData data = new JSONData();
@@ -953,6 +1030,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;int&gt;
+        /// </summary>
         public static implicit operator List<int>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -962,6 +1042,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;uint&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<uint> value)
         {
             JSONData data = new JSONData();
@@ -971,6 +1054,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;uint&gt;
+        /// </summary>
         public static implicit operator List<uint>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -980,6 +1066,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;long&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<long> value)
         {
             JSONData data = new JSONData();
@@ -989,6 +1078,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;long&gt;
+        /// </summary>
         public static implicit operator List<long>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -998,6 +1090,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;ulong&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<ulong> value)
         {
             JSONData data = new JSONData();
@@ -1007,6 +1102,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;ulong&gt;
+        /// </summary>
         public static implicit operator List<ulong>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1016,6 +1114,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;float&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<float> value)
         {
             JSONData data = new JSONData();
@@ -1025,6 +1126,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;float&gt;
+        /// </summary>
         public static implicit operator List<float>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1034,6 +1138,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;double&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<double> value)
         {
             JSONData data = new JSONData();
@@ -1043,6 +1150,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;double&gt;
+        /// </summary>
         public static implicit operator List<double>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1052,6 +1162,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;bool&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<bool> value)
         {
             JSONData data = new JSONData();
@@ -1061,6 +1174,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;bool&gt;
+        /// </summary>
         public static implicit operator List<bool>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1070,6 +1186,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;char&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<char> value)
         {
             JSONData data = new JSONData();
@@ -1079,6 +1198,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;char&gt;
+        /// </summary>
         public static implicit operator List<char>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1088,6 +1210,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;string&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<string> value)
         {
             JSONData data = new JSONData();
@@ -1097,6 +1222,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;string&gt;
+        /// </summary>
         public static implicit operator List<string>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1106,6 +1234,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;JSONData&gt;
+        /// </summary>
         public static implicit operator List<JSONData>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1115,7 +1246,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
-
+        /// <summary>
+        /// Implicit convert from List&lt;byte?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<byte?> value)
         {
             JSONData data = new JSONData();
@@ -1125,6 +1258,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;byte?&gt;
+        /// </summary>
         public static implicit operator List<byte?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1134,6 +1270,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;sbyte?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<sbyte?> value)
         {
             JSONData data = new JSONData();
@@ -1143,6 +1282,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;sbyte?&gt;
+        /// </summary>
         public static implicit operator List<sbyte?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1152,6 +1294,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;short?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<short?> value)
         {
             JSONData data = new JSONData();
@@ -1161,6 +1306,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;short?&gt;
+        /// </summary>
         public static implicit operator List<short?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1170,6 +1318,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;ushort?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<ushort?> value)
         {
             JSONData data = new JSONData();
@@ -1179,6 +1330,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;ushort?&gt;
+        /// </summary>
         public static implicit operator List<ushort?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1188,6 +1342,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;int?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<int?> value)
         {
             JSONData data = new JSONData();
@@ -1197,6 +1354,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;int?&gt;
+        /// </summary>
         public static implicit operator List<int?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1206,6 +1366,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;uint?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<uint?> value)
         {
             JSONData data = new JSONData();
@@ -1215,6 +1378,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;uint?&gt;
+        /// </summary>
         public static implicit operator List<uint?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1224,6 +1390,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;long?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<long?> value)
         {
             JSONData data = new JSONData();
@@ -1233,6 +1402,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;long?&gt;
+        /// </summary>
         public static implicit operator List<long?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1242,6 +1414,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;ulong?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<ulong?> value)
         {
             JSONData data = new JSONData();
@@ -1251,6 +1426,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;ulong?&gt;
+        /// </summary>
         public static implicit operator List<ulong?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1260,6 +1438,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;float?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<float?> value)
         {
             JSONData data = new JSONData();
@@ -1269,6 +1450,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;float?&gt;
+        /// </summary>
         public static implicit operator List<float?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1278,6 +1462,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;double?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<double?> value)
         {
             JSONData data = new JSONData();
@@ -1287,6 +1474,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;double?&gt;
+        /// </summary>
         public static implicit operator List<double?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1296,6 +1486,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;bool?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<bool?> value)
         {
             JSONData data = new JSONData();
@@ -1305,6 +1498,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;bool?&gt;
+        /// </summary>
         public static implicit operator List<bool?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1314,6 +1510,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from List&lt;char?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(List<char?> value)
         {
             JSONData data = new JSONData();
@@ -1323,6 +1522,9 @@ namespace CSharpLike
                 data.listValue.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to List&lt;char?&gt;
+        /// </summary>
         public static implicit operator List<char?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeList)
@@ -1332,6 +1534,9 @@ namespace CSharpLike
                 data.Add(item);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, bool&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, bool> value)
         {
             JSONData data = new JSONData();
@@ -1341,6 +1546,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, bool&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, bool>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1350,6 +1558,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, byte&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, byte> value)
         {
             JSONData data = new JSONData();
@@ -1359,6 +1570,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, byte&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, byte>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1368,6 +1582,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, sbyte&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, sbyte> value)
         {
             JSONData data = new JSONData();
@@ -1377,6 +1594,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, sbyte&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, sbyte>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1386,6 +1606,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, short&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, short> value)
         {
             JSONData data = new JSONData();
@@ -1395,6 +1618,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, short&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, short>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1404,6 +1630,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, ushort&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, ushort> value)
         {
             JSONData data = new JSONData();
@@ -1413,6 +1642,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, ushort&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, ushort>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1422,6 +1654,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, int&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, int> value)
         {
             JSONData data = new JSONData();
@@ -1431,6 +1666,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, int&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, int>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1440,6 +1678,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, uint&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, uint> value)
         {
             JSONData data = new JSONData();
@@ -1449,6 +1690,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, uint&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, uint>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1458,6 +1702,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, long&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, long> value)
         {
             JSONData data = new JSONData();
@@ -1467,6 +1714,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, long&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, long>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1476,6 +1726,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, ulong&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, ulong> value)
         {
             JSONData data = new JSONData();
@@ -1485,6 +1738,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, ulong&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, ulong>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1494,6 +1750,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, float&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, float> value)
         {
             JSONData data = new JSONData();
@@ -1503,6 +1762,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, float&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, float>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1512,6 +1774,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, double&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, double> value)
         {
             JSONData data = new JSONData();
@@ -1521,6 +1786,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, double&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, double>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1530,6 +1798,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, string&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, string> value)
         {
             JSONData data = new JSONData();
@@ -1539,6 +1810,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, string&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, string>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1548,6 +1822,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, bool?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, bool?> value)
         {
             JSONData data = new JSONData();
@@ -1557,6 +1834,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, bool?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, bool?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1566,6 +1846,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, byte?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, byte?> value)
         {
             JSONData data = new JSONData();
@@ -1575,6 +1858,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, byte?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, byte?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1584,6 +1870,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, sbyte?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, sbyte?> value)
         {
             JSONData data = new JSONData();
@@ -1593,6 +1882,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, sbyte?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, sbyte?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1602,6 +1894,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, short?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, short?> value)
         {
             JSONData data = new JSONData();
@@ -1611,6 +1906,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, short?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, short?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1620,6 +1918,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, ushort?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, ushort?> value)
         {
             JSONData data = new JSONData();
@@ -1629,6 +1930,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, ushort?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, ushort?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1638,6 +1942,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, int?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, int?> value)
         {
             JSONData data = new JSONData();
@@ -1647,6 +1954,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, int?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, int?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1656,6 +1966,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, uint?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, uint?> value)
         {
             JSONData data = new JSONData();
@@ -1665,6 +1978,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, uint?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, uint?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1674,6 +1990,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, long?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, long?> value)
         {
             JSONData data = new JSONData();
@@ -1683,6 +2002,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, long?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, long?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1692,6 +2014,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, ulong?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, ulong?> value)
         {
             JSONData data = new JSONData();
@@ -1701,6 +2026,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, ulong?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, ulong?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1710,6 +2038,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, float?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, float?> value)
         {
             JSONData data = new JSONData();
@@ -1719,6 +2050,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, float?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, float?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1728,6 +2062,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from Dictionary&lt;string, double?&gt; to JSONData;
+        /// </summary>
         public static implicit operator JSONData(Dictionary<string, double?> value)
         {
             JSONData data = new JSONData();
@@ -1737,6 +2074,9 @@ namespace CSharpLike
                 data.dictValue.Add(item.Key, item.Value);
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to Dictionary&lt;string, double?&gt;
+        /// </summary>
         public static implicit operator Dictionary<string, double?>(JSONData value)
         {
             if (value == null || value.dataType != DataType.DataTypeDictionary)
@@ -1746,7 +2086,9 @@ namespace CSharpLike
                 data.Add(item.Key, item.Value);
             return data;
         }
-
+        /// <summary>
+        /// Implicit convert from byte to JSONData;
+        /// </summary>
         public static implicit operator JSONData(byte value)
         {
             JSONData data = new JSONData();
@@ -1754,6 +2096,9 @@ namespace CSharpLike
             data.iValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to byte
+        /// </summary>
         public static implicit operator byte(JSONData value)
         {
             if (value == null)
@@ -1772,8 +2117,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to byte");
         }
-
-
+        /// <summary>
+        /// Implicit convert from byte? to JSONData
+        /// </summary>
         public static implicit operator JSONData(byte? value)
         {
             JSONData data = new JSONData();
@@ -1781,6 +2127,9 @@ namespace CSharpLike
             data.iValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to byte?
+        /// </summary>
         public static implicit operator byte?(JSONData value)
         {
             if (value == null)
@@ -1811,8 +2160,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to byte?");
         }
-
-
+        /// <summary>
+        /// Implicit convert from sbyte to JSONData
+        /// </summary>
         public static implicit operator JSONData(sbyte value)
         {
             JSONData data = new JSONData();
@@ -1820,6 +2170,9 @@ namespace CSharpLike
             data.iValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to sbyte
+        /// </summary>
         public static implicit operator sbyte(JSONData value)
         {
             if (value == null)
@@ -1838,8 +2191,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to sbyte");
         }
-
-
+        /// <summary>
+        /// Implicit convert from JSONData to sbyte?
+        /// </summary>
         public static implicit operator sbyte?(JSONData value)
         {
             if (value == null)
@@ -1870,6 +2224,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to sbyte?");
         }
+        /// <summary>
+        /// Implicit convert from sbyte? to JSONData
+        /// </summary>
         public static implicit operator JSONData(sbyte? value)
         {
             JSONData data = new JSONData();
@@ -1877,8 +2234,9 @@ namespace CSharpLike
             data.iValueNullable = value;
             return data;
         }
-
-
+        /// <summary>
+        /// Implicit convert from short to JSONData
+        /// </summary>
         public static implicit operator JSONData(short value)
         {
             JSONData data = new JSONData();
@@ -1886,6 +2244,9 @@ namespace CSharpLike
             data.iValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to short
+        /// </summary>
         public static implicit operator short(JSONData value)
         {
             if (value == null)
@@ -1904,8 +2265,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to short");
         }
-
-
+        /// <summary>
+        /// Implicit convert from ushort to JSONData
+        /// </summary>
         public static implicit operator JSONData(ushort value)
         {
             JSONData data = new JSONData();
@@ -1913,6 +2275,9 @@ namespace CSharpLike
             data.iValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to ushort
+        /// </summary>
         public static implicit operator ushort(JSONData value)
         {
             if (value == null)
@@ -1931,8 +2296,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to ushort");
         }
-
-
+        /// <summary>
+        /// Implicit convert from DateTime to JSONData
+        /// </summary>
         public static implicit operator JSONData(DateTime value)
         {
             JSONData data = new JSONData();
@@ -1940,6 +2306,9 @@ namespace CSharpLike
             data.strValue = value.ToString("yyyy-MM-dd HH:mm:ss");
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to DateTime
+        /// </summary>
         public static implicit operator DateTime(JSONData value)
         {
             if (value == null)
@@ -1952,7 +2321,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to DateTime");
         }
-
+        /// <summary>
+        /// Implicit convert from DateTime? to JSONData
+        /// </summary>
         public static implicit operator JSONData(DateTime? value)
         {
             JSONData data = new JSONData();
@@ -1960,6 +2331,9 @@ namespace CSharpLike
             data.strValue = value != null ? value?.ToString("yyyy-MM-dd HH:mm:ss") : null;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to DateTime?
+        /// </summary>
         public static implicit operator DateTime?(JSONData value)
         {
             if (value == null)
@@ -1972,8 +2346,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to DateTime");
         }
-
-
+        /// <summary>
+        /// Implicit convert from int to JSONData
+        /// </summary>
         public static implicit operator JSONData(int value)
         {
             JSONData data = new JSONData();
@@ -1981,6 +2356,9 @@ namespace CSharpLike
             data.iValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to int
+        /// </summary>
         public static implicit operator int(JSONData value)
         {
             if (value == null)
@@ -1999,8 +2377,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to int");
         }
-
-
+        /// <summary>
+        /// Implicit convert from uint to JSONData
+        /// </summary>
         public static implicit operator JSONData(uint value)
         {
             JSONData data = new JSONData();
@@ -2008,6 +2387,9 @@ namespace CSharpLike
             data.lValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to uint
+        /// </summary>
         public static implicit operator uint(JSONData value)
         {
             if (value == null)
@@ -2026,8 +2408,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to uint");
         }
-
-
+        /// <summary>
+        /// Implicit convert from long to JSONData
+        /// </summary>
         public static implicit operator JSONData(long value)
         {
             JSONData data = new JSONData();
@@ -2035,6 +2418,9 @@ namespace CSharpLike
             data.lValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to long
+        /// </summary>
         public static implicit operator long(JSONData value)
         {
             if (value == null)
@@ -2053,8 +2439,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to long");
         }
-
-
+        /// <summary>
+        /// Implicit convert from ulong to JSONData
+        /// </summary>
         public static implicit operator JSONData(ulong value)
         {
             JSONData data = new JSONData();
@@ -2062,6 +2449,9 @@ namespace CSharpLike
             data.ulValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to ulong
+        /// </summary>
         public static implicit operator ulong(JSONData value)
         {
             if (value == null)
@@ -2080,7 +2470,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to ulong");
         }
-
+        /// <summary>
+        /// Implicit convert from double to JSONData
+        /// </summary>
         public static implicit operator JSONData(double value)
         {
             JSONData data = new JSONData();
@@ -2088,6 +2480,9 @@ namespace CSharpLike
             data.dValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to double
+        /// </summary>
         public static implicit operator double(JSONData value)
         {
             if (value == null)
@@ -2106,7 +2501,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to double");
         }
-
+        /// <summary>
+        /// Implicit convert from float to JSONData
+        /// </summary>
         public static implicit operator JSONData(float value)
         {
             JSONData data = new JSONData();
@@ -2114,6 +2511,9 @@ namespace CSharpLike
             data.dValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to float
+        /// </summary>
         public static implicit operator float(JSONData value)
         {
             if (value == null)
@@ -2132,8 +2532,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to float");
         }
-
-
+        /// <summary>
+        /// Implicit convert from char to JSONData
+        /// </summary>
         public static implicit operator JSONData(char value)
         {
             JSONData data = new JSONData();
@@ -2141,6 +2542,9 @@ namespace CSharpLike
             data.strValue = value.ToString();
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to char
+        /// </summary>
         public static implicit operator char(JSONData value)
         {
             if (value == null)
@@ -2159,8 +2563,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to char");
         }
-
-
+        /// <summary>
+        /// Implicit convert from string to JSONData
+        /// </summary>
         public static implicit operator JSONData(string value)
         {
             JSONData data = new JSONData();
@@ -2168,6 +2573,9 @@ namespace CSharpLike
             data.strValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to string
+        /// </summary>
         public static implicit operator string(JSONData value)
         {
             if (value == null)
@@ -2188,6 +2596,9 @@ namespace CSharpLike
             }
             return value.ToString();
         }
+        /// <summary>
+        /// Implicit convert from short? to JSONData
+        /// </summary>
         public static implicit operator JSONData(short? value)
         {
             JSONData data = new JSONData();
@@ -2195,6 +2606,9 @@ namespace CSharpLike
             data.iValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to short?
+        /// </summary>
         public static implicit operator short?(JSONData value)
         {
             if (value == null)
@@ -2225,6 +2639,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to short?");
         }
+        /// <summary>
+        /// Implicit convert from ushort? to JSONData
+        /// </summary>
         public static implicit operator JSONData(ushort? value)
         {
             JSONData data = new JSONData();
@@ -2232,6 +2649,9 @@ namespace CSharpLike
             data.iValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to ushort?
+        /// </summary>
         public static implicit operator ushort?(JSONData value)
         {
             if (value == null)
@@ -2262,6 +2682,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to ushort?");
         }
+        /// <summary>
+        /// Implicit convert from int? to JSONData
+        /// </summary>
         public static implicit operator JSONData(int? value)
         {
             JSONData data = new JSONData();
@@ -2269,6 +2692,9 @@ namespace CSharpLike
             data.iValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to int?
+        /// </summary>
         public static implicit operator int?(JSONData value)
         {
             if (value == null)
@@ -2299,6 +2725,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to int?");
         }
+        /// <summary>
+        /// Implicit convert from uint? to JSONData
+        /// </summary>
         public static implicit operator JSONData(uint? value)
         {
             JSONData data = new JSONData();
@@ -2306,6 +2735,9 @@ namespace CSharpLike
             data.lValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to uint?
+        /// </summary>
         public static implicit operator uint?(JSONData value)
         {
             if (value == null)
@@ -2336,6 +2768,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to uint?");
         }
+        /// <summary>
+        /// Implicit convert from long? to JSONData
+        /// </summary>
         public static implicit operator JSONData(long? value)
         {
             JSONData data = new JSONData();
@@ -2343,6 +2778,9 @@ namespace CSharpLike
             data.lValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to long?
+        /// </summary>
         public static implicit operator long?(JSONData value)
         {
             if (value == null)
@@ -2373,6 +2811,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to long?");
         }
+        /// <summary>
+        /// Implicit convert from ulong? to JSONData
+        /// </summary>
         public static implicit operator JSONData(ulong? value)
         {
             JSONData data = new JSONData();
@@ -2380,6 +2821,9 @@ namespace CSharpLike
             data.ulValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to ulong?
+        /// </summary>
         public static implicit operator ulong?(JSONData value)
         {
             if (value == null)
@@ -2410,6 +2854,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to ulong?");
         }
+        /// <summary>
+        /// Implicit convert from double? to JSONData
+        /// </summary>
         public static implicit operator JSONData(double? value)
         {
             JSONData data = new JSONData();
@@ -2417,6 +2864,9 @@ namespace CSharpLike
             data.dValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to double?
+        /// </summary>
         public static implicit operator double?(JSONData value)
         {
             if (value == null)
@@ -2447,6 +2897,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to double?");
         }
+        /// <summary>
+        /// Implicit convert from float? to JSONData
+        /// </summary>
         public static implicit operator JSONData(float? value)
         {
             JSONData data = new JSONData();
@@ -2454,6 +2907,9 @@ namespace CSharpLike
             data.dValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to float?
+        /// </summary>
         public static implicit operator float?(JSONData value)
         {
             if (value == null)
@@ -2484,6 +2940,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to float?");
         }
+        /// <summary>
+        /// Implicit convert from char? to JSONData
+        /// </summary>
         public static implicit operator JSONData(char? value)
         {
             JSONData data = new JSONData();
@@ -2491,6 +2950,9 @@ namespace CSharpLike
             data.strValue = value.ToString();
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to char?
+        /// </summary>
         public static implicit operator char?(JSONData value)
         {
             if (value == null)
@@ -2521,6 +2983,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to char?");
         }
+        /// <summary>
+        /// Implicit convert from bool? to JSONData
+        /// </summary>
         public static implicit operator JSONData(bool? value)
         {
             JSONData data = new JSONData();
@@ -2528,6 +2993,9 @@ namespace CSharpLike
             data.bValueNullable = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from bool to JSONData
+        /// </summary>
         public static implicit operator JSONData(bool value)
         {
             JSONData data = new JSONData();
@@ -2535,6 +3003,9 @@ namespace CSharpLike
             data.bValue = value;
             return data;
         }
+        /// <summary>
+        /// Implicit convert from JSONData to bool
+        /// </summary>
         public static implicit operator bool(JSONData value)
         {
             if (value == null)
@@ -2570,6 +3041,9 @@ namespace CSharpLike
             }
             throw new Exception(value.ToString() + " can't convert to bool");
         }
+        /// <summary>
+        /// Implicit convert from JSONData to bool?
+        /// </summary>
         public static implicit operator bool?(JSONData value)
         {
             if (value == null)

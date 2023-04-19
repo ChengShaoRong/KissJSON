@@ -1,0 +1,1104 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>KissJSON</name>
+    </assembly>
+    <members>
+        <member name="T:CSharpLike.JSONData">
+            <summary>
+            A simple JSON data.
+            It's not the most efficient,but the easiest to use.
+            </summary>
+        </member>
+        <member name="T:CSharpLike.JSONData.DataType">
+            <summary>
+            Data type of the JSON
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeNull">
+            <summary>
+            This JSON object is null
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeDictionary">
+            <summary>
+            Is Dictionary type
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeList">
+            <summary>
+            Is List type
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeString">
+            <summary>
+            Value type is string
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeBoolean">
+            <summary>
+            Value type is boolean
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeInt">
+            <summary>
+            IValue type is a nt
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeLong">
+            <summary>
+            Value type is long
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeULong">
+            <summary>
+            Value type is ulong
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeDouble">
+            <summary>
+            Value type is double
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeBooleanNullable">
+            <summary>
+            Value type is nullable boolean
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeIntNullable">
+            <summary>
+            Value type is nullable int
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeLongNullable">
+            <summary>
+            Value type is nullable long
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeULongNullable">
+            <summary>
+            Value type is nullable ulong
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.DataType.DataTypeDoubleNullable">
+            <summary>
+            Value type is nullable double
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.packetIsInteger">
+            <summary>
+            The packet type save as integer or string. 
+            Default is string, that easy identify in log.
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.NewPacket``1(``0)">
+            <summary>
+            Create a JSONData with packet type for network packet, that use in NONE hot update script.
+            </summary>
+            <param name="packetType">Add to JSON object with key 'packetType'</param>
+        </member>
+        <member name="M:CSharpLike.JSONData.GetPacketType``1">
+            <summary>
+            Get the packet type, that use in NONE hot update script.
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.NewPacket(System.Type,System.Object)">
+            <summary>
+            Create a JSONData with packet type for network packet, that use in hot update script.
+            </summary>
+            <param name="type">The type of the Packet</param>
+            <param name="value">The value of 'packetType'</param>
+        </member>
+        <member name="M:CSharpLike.JSONData.GetPacketType(System.Type)">
+            <summary>
+            Get the packet type, that use in hot update script.
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.NewDictionary">
+            <summary>
+            Create a JSONData which is Dictionary
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.NewList">
+            <summary>
+            Create a JSONData which is List
+            </summary>
+        </member>
+        <member name="P:CSharpLike.JSONData.Value">
+            <summary>
+            the value of this JSONData
+            </summary>
+        </member>
+        <member name="P:CSharpLike.JSONData.ValueType">
+            <summary>
+            the type of this JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.DeepClone(CSharpLike.JSONData)">
+            <summary>
+            Get a deep clone JSONData object
+            </summary>
+            <param name="sourceJsonData">The source JSONData object</param>
+        </member>
+        <member name="P:CSharpLike.JSONData.Item(System.String)">
+            <summary>
+            get/set item of this(this is a Dictionary),Same with Dictionary.this[]
+            </summary>
+        </member>
+        <member name="P:CSharpLike.JSONData.Item(System.Int32)">
+            <summary>
+            get/set item of this(this is a List),Same with List.this[]
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Add(CSharpLike.JSONData)">
+            <summary>
+            Add an JSONData to this(this is a List).Same with List.Add().
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Insert(System.Int32,CSharpLike.JSONData)">
+            <summary>
+            Insert item to this(this is a List),Same with List.Insert().
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Remove(CSharpLike.JSONData)">
+            <summary>
+            Remove item from this(this is a List),Same with List.Remove().
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.RemoveAt(System.Int32)">
+            <summary>
+            Remove item from this by index(this is a List),Same with List.RemoveAt().
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Reverse">
+            <summary>
+            Reverse item of this(this is a List),Same with List.Reverse().
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Contains(CSharpLike.JSONData)">
+            <summary>
+            Check this whether contains item(this is a List),Same with List.Contains().
+            </summary>
+        </member>
+        <member name="P:CSharpLike.JSONData.Count">
+            <summary>
+            item count of this(this is a List or Dictionary),Same with List.Count or Dictionary.Count
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Clear">
+            <summary>
+            clear item of this(this is a List or Dictionary),Same with List.Clear() or Dictionary.Clear()
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.Add(System.String,CSharpLike.JSONData)">
+            <summary>
+            add item to this(this is a Dictionary),Same with Dictionary.Add()
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.RemoveKey(System.String)">
+            <summary>
+            remove item from this(this is a Dictionary),Same with Dictionary.RemoveKey()
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.ContainsKey(System.String)">
+            <summary>
+            Check this whether contains key(this is a Dictionary),Same with Dictionary.ContainsKey()
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.ContainsValue(CSharpLike.JSONData)">
+            <summary>
+            Check this whether contains value(this is a Dictionary),Same with Dictionary.ContainsValue()
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.TryGetValue(System.String,CSharpLike.JSONData@)">
+            <summary>
+            try get value from this(this is a Dictionary),Same with Dictionary.TryGetValue()
+            </summary>
+        </member>
+        <member name="F:CSharpLike.JSONData.dataType">
+            <summary>
+            The data type of this object 
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.GetObjectExtern(System.String)">
+            <summary>
+            Get extern object from this JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.SetObjectExtern(System.String,System.Object)">
+            <summary>
+            Set extern object to this JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.ToString">
+            <summary>
+            Convert this JSONData to string no deal with special string '\' '"' '\n' '\r' '\t' '\b' '\f'. 
+            They are will error if have secial string in it, you should use ToJson() instead.
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.ToJson(System.Boolean,System.Int32)">
+            <summary>
+            Convert this JSONData to JSON string had deal with special string '\' '"' '\n' '\r' '\t' '\b' '\f'. 
+            </summary>
+            <param name="bFormat">Format the JSON string, make it more readability. default is false</param>
+            <param name="depth">Internal use, you can ignore it</param>
+            <returns></returns>
+        </member>
+        <member name="M:CSharpLike.JSONData.ConvertTo(System.Object)">
+            <summary>
+            object Convert To JSONData.
+            It's suppose as internal use.
+            </summary>
+            <param name="obj">only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/byte?/sbyte?/short?/ushort?/int?/uint?/long?/ulong?/bool?</param>
+            <returns></returns>
+        </member>
+        <member name="M:CSharpLike.JSONData.ConvertTo(System.Type,CSharpLike.JSONData)">
+            <summary>
+            JSONData Convert To target object.
+            It's suppose as internal use.
+            </summary>
+            <param name="targetType">The target Type</param>
+            <param name="obj">JSONData</param>
+            <returns>only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/byte?/sbyte?/short?/ushort?/int?/uint?/long?/ulong?/bool?</returns>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Byte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;byte&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Byte}">
+            <summary>
+            Implicit convert from JSONData to List&lt;byte&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.SByte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;sbyte&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.SByte}">
+            <summary>
+            Implicit convert from JSONData to List&lt;sbyte&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Int16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;short&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Int16}">
+            <summary>
+            Implicit convert from JSONData to List&lt;short&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.UInt16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;ushort&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.UInt16}">
+            <summary>
+            Implicit convert from JSONData to List&lt;ushort&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Int32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;int&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Int32}">
+            <summary>
+            Implicit convert from JSONData to List&lt;int&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.UInt32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;uint&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.UInt32}">
+            <summary>
+            Implicit convert from JSONData to List&lt;uint&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Int64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;long&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Int64}">
+            <summary>
+            Implicit convert from JSONData to List&lt;long&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.UInt64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;ulong&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.UInt64}">
+            <summary>
+            Implicit convert from JSONData to List&lt;ulong&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Single})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;float&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Single}">
+            <summary>
+            Implicit convert from JSONData to List&lt;float&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Double})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;double&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Double}">
+            <summary>
+            Implicit convert from JSONData to List&lt;double&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Boolean})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;bool&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Boolean}">
+            <summary>
+            Implicit convert from JSONData to List&lt;bool&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Char})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;char&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Char}">
+            <summary>
+            Implicit convert from JSONData to List&lt;char&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.String})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;string&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.String}">
+            <summary>
+            Implicit convert from JSONData to List&lt;string&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{CSharpLike.JSONData}">
+            <summary>
+            Implicit convert from JSONData to List&lt;JSONData&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Byte}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;byte?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Byte}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;byte?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.SByte}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;sbyte?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.SByte}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;sbyte?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Int16}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;short?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Int16}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;short?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.UInt16}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;ushort?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.UInt16}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;ushort?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Int32}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;int?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Int32}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;int?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.UInt32}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;uint?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.UInt32}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;uint?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Int64}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;long?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Int64}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;long?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.UInt64}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;ulong?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.UInt64}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;ulong?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Single}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;float?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Single}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;float?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Double}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;double?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Double}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;double?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Boolean}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;bool?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Boolean}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;bool?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.List{System.Nullable{System.Char}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from List&lt;char?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.List{System.Nullable{System.Char}}">
+            <summary>
+            Implicit convert from JSONData to List&lt;char?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Boolean})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, bool&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Boolean}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, bool&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Byte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, byte&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Byte}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, byte&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.SByte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, sbyte&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.SByte}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, sbyte&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Int16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, short&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Int16}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, short&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.UInt16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, ushort&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.UInt16}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, ushort&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Int32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, int&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Int32}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, int&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.UInt32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, uint&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.UInt32}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, uint&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Int64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, long&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Int64}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, long&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.UInt64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, ulong&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.UInt64}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, ulong&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Single})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, float&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Single}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, float&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Double})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, double&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Double}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, double&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.String})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, string&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.String}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, string&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Boolean}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, bool?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Boolean}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, bool?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Byte}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, byte?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Byte}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, byte?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.SByte}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, sbyte?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.SByte}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, sbyte?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int16}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, short?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int16}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, short?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt16}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, ushort?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt16}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, ushort?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int32}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, int?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int32}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, int?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt32}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, uint?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt32}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, uint?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int64}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, long?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Int64}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, long?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt64}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, ulong?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.UInt64}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, ulong?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Single}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, float?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Single}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, float?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Double}})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from Dictionary&lt;string, double?&gt; to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Collections.Generic.Dictionary{System.String,System.Nullable{System.Double}}">
+            <summary>
+            Implicit convert from JSONData to Dictionary&lt;string, double?&gt;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Byte)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from byte to JSONData;
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Byte">
+            <summary>
+            Implicit convert from JSONData to byte
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Byte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from byte? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Byte}">
+            <summary>
+            Implicit convert from JSONData to byte?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.SByte)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from sbyte to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.SByte">
+            <summary>
+            Implicit convert from JSONData to sbyte
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.SByte}">
+            <summary>
+            Implicit convert from JSONData to sbyte?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.SByte})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from sbyte? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Int16)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from short to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Int16">
+            <summary>
+            Implicit convert from JSONData to short
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.UInt16)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from ushort to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.UInt16">
+            <summary>
+            Implicit convert from JSONData to ushort
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.DateTime)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from DateTime to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.DateTime">
+            <summary>
+            Implicit convert from JSONData to DateTime
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.DateTime})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from DateTime? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.DateTime}">
+            <summary>
+            Implicit convert from JSONData to DateTime?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Int32)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from int to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Int32">
+            <summary>
+            Implicit convert from JSONData to int
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.UInt32)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from uint to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.UInt32">
+            <summary>
+            Implicit convert from JSONData to uint
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Int64)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from long to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Int64">
+            <summary>
+            Implicit convert from JSONData to long
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.UInt64)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from ulong to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.UInt64">
+            <summary>
+            Implicit convert from JSONData to ulong
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Double)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from double to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Double">
+            <summary>
+            Implicit convert from JSONData to double
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Single)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from float to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Single">
+            <summary>
+            Implicit convert from JSONData to float
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Char)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from char to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Char">
+            <summary>
+            Implicit convert from JSONData to char
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.String)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from string to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.String">
+            <summary>
+            Implicit convert from JSONData to string
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Int16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from short? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Int16}">
+            <summary>
+            Implicit convert from JSONData to short?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.UInt16})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from ushort? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.UInt16}">
+            <summary>
+            Implicit convert from JSONData to ushort?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Int32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from int? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Int32}">
+            <summary>
+            Implicit convert from JSONData to int?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.UInt32})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from uint? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.UInt32}">
+            <summary>
+            Implicit convert from JSONData to uint?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Int64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from long? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Int64}">
+            <summary>
+            Implicit convert from JSONData to long?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.UInt64})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from ulong? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.UInt64}">
+            <summary>
+            Implicit convert from JSONData to ulong?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Double})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from double? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Double}">
+            <summary>
+            Implicit convert from JSONData to double?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Single})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from float? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Single}">
+            <summary>
+            Implicit convert from JSONData to float?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Char})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from char? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Char}">
+            <summary>
+            Implicit convert from JSONData to char?
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Nullable{System.Boolean})~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from bool? to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(System.Boolean)~CSharpLike.JSONData">
+            <summary>
+            Implicit convert from bool to JSONData
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Boolean">
+            <summary>
+            Implicit convert from JSONData to bool
+            </summary>
+        </member>
+        <member name="M:CSharpLike.JSONData.op_Implicit(CSharpLike.JSONData)~System.Nullable{System.Boolean}">
+            <summary>
+            Implicit convert from JSONData to bool?
+            </summary>
+        </member>
+        <member name="T:CSharpLike.KissJsonDontSerialize">
+            <summary>
+            Mark as don't serialize by KISS JSON
+            </summary>
+        </member>
+        <member name="T:CSharpLike.KissJsonSerializeProperty">
+            <summary>
+            Mark as serialize Property  by KISS JSON
+            </summary>
+        </member>
+        <member name="T:CSharpLike.KissJson">
+            <summary>
+            Keep It Simple Stupid JSON.
+            Convert to each other between JSONData and JSON string and class/struct object.
+            Why I have to this JSON library but not the LitJson/NewtonJson/...?
+            Because KissJson is the unique one which SUPPORT the class in hot update script!
+            </summary>
+        </member>
+        <member name="P:CSharpLike.KissJson.ignoreNull">
+            <summary>
+            ignore null
+            </summary>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToJSONData(System.Object)">
+            <summary>
+            Convert object to JSONData
+            </summary>
+            <param name="obj">object want to be converted</param>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToJson(System.Object)">
+            <summary>
+            an object convert to JSON string
+            </summary>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToJSONData(System.String)">
+            <summary>
+            JSON string convert to JSONData
+            </summary>
+            <param name="strJSON">JSON string</param>
+            <returns>JSONData</returns>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToObject(System.Type,System.String)">
+            <summary>
+            cast JSON string to object (class/struct).
+            e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), strJson);
+            Why not make it like LitJson 'TestJsonData testJsonData = KissJson.ToObject＜TestJsonData>(strJson);'?
+            Because that style not support the class in hot update script.
+            </summary>
+            <param name="type">type of object you want to cast</param>
+            <param name="strJSON">JSON string</param>
+            <returns>object</returns>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToObject(System.Type,CSharpLike.JSONData)">
+            <summary>
+            cast JSONData to object (class/struct).
+            e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), jsonData);
+            </summary>
+            <param name="type">type of object you want to cast</param>
+            <param name="jsonData">JSONData object</param>
+            <returns>object</returns>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToObjects(System.Type,System.String)">
+            <summary>
+            cast JSON string to objects (class/struct).
+            e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+            </summary>
+            <param name="type">type of object you want to cast</param>
+            <param name="strJSON">JSON string</param>
+            <returns>List of object</returns>
+        </member>
+        <member name="M:CSharpLike.KissJson.ToObjects(System.Type,CSharpLike.JSONData)">
+            <summary>
+            cast JSONData to objects (class/struct).
+            e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+            </summary>
+            <param name="type">type of object you want to cast</param>
+            <param name="jsonData">JSONData object</param>
+            <returns>List of object</returns>
+        </member>
+        <member name="M:CSharpLike.KissJson.RemoveNullable(System.String@)">
+            <summary>
+            Remove nullable string
+            </summary>
+        </member>
+    </members>
+</doc>

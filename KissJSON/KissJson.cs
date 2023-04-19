@@ -42,6 +42,10 @@ namespace CSharpLike
             get { return KISSJsonImp.ignoreNull; }
             set { KISSJsonImp.ignoreNull = value; }
         }
+        /// <summary>
+        /// Convert object to JSONData
+        /// </summary>
+        /// <param name="obj">object want to be converted</param>
         public static JSONData ToJSONData(object obj)
         {
             return ToJSONData(ToJson(obj));
@@ -773,7 +777,7 @@ namespace CSharpLike
         }
         /// <summary>
         /// cast JSON string to objects (class/struct).
-        /// e.g. List<object> testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
         /// </summary>
         /// <param name="type">type of object you want to cast</param>
         /// <param name="strJSON">JSON string</param>
@@ -784,7 +788,7 @@ namespace CSharpLike
         }
         /// <summary>
         /// cast JSONData to objects (class/struct).
-        /// e.g. List<object> testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
         /// </summary>
         /// <param name="type">type of object you want to cast</param>
         /// <param name="jsonData">JSONData object</param>
@@ -1319,6 +1323,9 @@ namespace CSharpLike
 #endif
                 return obj.GetType().IsDefined(typeof(KissJsonDontSerialize));
         }
+        /// <summary>
+        /// Remove nullable string
+        /// </summary>
         public static bool RemoveNullable(ref string str)
         {
             bool bRet = false;

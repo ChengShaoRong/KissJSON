@@ -10,13 +10,18 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/ChengShaoRong/KissJSON</PackageProjectUrl>
-    <AssemblyVersion>1.0.5.0</AssemblyVersion>
-    <FileVersion>1.0.5.0</FileVersion>
-    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <FileVersion>1.0.6.0</FileVersion>
+    <Version>1.0.6</Version>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
     <PackageTags>JSON,C#Like</PackageTags>
     <RepositoryUrl>https://github.com/ChengShaoRong/KissJSON.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>D:\repos\ChengShaoRong\KissJSON\KissJSON\KissJSON.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
