@@ -1,6 +1,7 @@
 /*
+ *           C#Like
  * KissJson : Keep It Simple Stupid JSON
- * Copyright © 2022-2023 RongRong. All right reserved.
+ * Copyright © 2022-2025 RongRong. All right reserved.
  */
 using System.Text;
 using System.Collections.Generic;
@@ -34,6 +35,15 @@ namespace CSharpLike
     /// </summary>
     public sealed class KissJson
     {
+        /// <summary>
+        /// The FormatProvider for 'Convert.ToSingle' and 'Convert.ToDouble'. Default is 'CultureInfo.InvariantCulture'.
+        /// </summary>
+        public static CultureInfo CultureForConvertFloatAndDouble { get; set; } = CultureInfo.InvariantCulture;
+        /// <summary>
+        /// The FormatProvider for 'Convert.ToDateTime'. Default is 'CultureInfo.InvariantCulture'.
+        /// You should set this to fit your DateTime format in your JSON string.
+        /// </summary>
+        public static CultureInfo CultureForConvertDateTime { get; set; } = CultureInfo.InvariantCulture;
         /// <summary>
         /// ignore null
         /// </summary>
@@ -831,12 +841,23 @@ namespace CSharpLike
             }
             return null;
         }
-
+        static Dictionary<string, SInstance> cacheSInstances = new Dictionary<string, SInstance>();
         static SInstance _ToObject(SType type, JSONData jsonObj)
         {
             if (jsonObj == null || type == null || type.IsDefined("CSharpLike.KissJsonDontSerialize"))
                 return null;
-            SInstance obj = type.New().value as SInstance;
+            SInstance obj;
+            if (jsonObj.ContainsKey("_uid_"))
+            {
+                string _uid_ = jsonObj["_uid_"];
+                if (!cacheSInstances.TryGetValue(_uid_, out obj))
+                {
+                    obj = type.New().value as SInstance;
+                    cacheSInstances[_uid_] = obj;
+                }
+            }
+            else
+                obj = type.New().value as SInstance;
             foreach (var member in obj.members)
             {
                 if (type.IsMemberDefined(member.Key, "CSharpLike.KissJsonDontSerialize"))
@@ -845,7 +866,7 @@ namespace CSharpLike
                 if (jsonObj.TryGetValue(member.Key, out value) && value != null)
                 {
                     string FullName = member.Value.type.FullName;
-                    if (FullName == "KissFramework.KISSJson.JSONData")
+                    if (FullName == "CSharpLike.JSONData")
                     {
                         member.Value.value = value;
                         continue;
@@ -1010,6 +1031,37 @@ namespace CSharpLike
             return obj;
         }
 #endif
+        static Dictionary<string, object> cacheObjects = new Dictionary<string, object>();
+        /// <summary>
+        /// Clear the instance in cache that contain '_uid_' key.
+        /// That object from server with '_uid_' will keep in cache and auto sync the value from server.
+        /// </summary>
+        /// <param name="key">The value of '_uid_', if passing null will clear all cache(You may call 'KissJson.ClearCache()' after you logout).
+        /// You should remove it when you don't need that object.</param>
+        public static void ClearCache(string key = null)
+        {
+#if _CSHARP_LIKE_
+            if (key != null)
+            {
+                cacheObjects.Remove(key);
+                cacheSInstances.Remove(key);
+            }
+            else
+            {
+                cacheObjects.Clear();
+                cacheSInstances.Clear();
+            }
+#else
+            if (key != null)
+            {
+                cacheObjects.Remove(key);
+            }
+            else
+            {
+                cacheObjects.Clear();
+            }
+#endif
+        }
         static Assembly[] _mAssemblys = AppDomain.CurrentDomain.GetAssemblies();
         static Dictionary<string, Type> _TypeCache = new Dictionary<string, Type>();
         static Type _GetType(string typeName)
@@ -1036,7 +1088,18 @@ namespace CSharpLike
         {
             if (jsonObj == null)
                 return null;
-            object obj = type.Assembly.CreateInstance(type.FullName);
+            object obj;
+            if (jsonObj.ContainsKey("_uid_"))
+            {
+                string _uid_ = jsonObj["_uid_"];
+                if (!cacheObjects.TryGetValue(_uid_, out obj))
+                {
+                    obj = type.Assembly.CreateInstance(type.FullName);
+                    cacheObjects[_uid_] = obj;
+                }
+            }
+            else
+                obj = type.Assembly.CreateInstance(type.FullName);
             var fs = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
             foreach (var f in fs)
             {
@@ -1050,7 +1113,7 @@ namespace CSharpLike
                         f.SetValue(obj, Enum.Parse(f.FieldType, value.Value.ToString())); 
                         continue;
                     }
-                    if (f.FieldType.FullName == "KissFramework.KISSJson.JSONData")
+                    if (f.FieldType.FullName == "CSharpLike.JSONData")
                     {
                         f.SetValue(obj, value);
                         continue;
@@ -1071,7 +1134,24 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeIntNullable:
                         case JSONData.DataType.DataTypeLongNullable:
                         case JSONData.DataType.DataTypeDoubleNullable:
-                            f.SetValue(obj, value.Value);
+                            switch (f.FieldType.Name)
+                            {
+                                case "Boolean": f.SetValue(obj, Convert.ToBoolean(value.Value)); break;
+                                case "Byte": f.SetValue(obj, Convert.ToByte(value.Value)); break;
+                                case "SByte": f.SetValue(obj, Convert.ToSByte(value.Value)); break;
+                                case "Int16": f.SetValue(obj, Convert.ToInt16(value.Value)); break;
+                                case "UInt16": f.SetValue(obj, Convert.ToUInt16(value.Value)); break;
+                                case "Int32": f.SetValue(obj, Convert.ToInt32(value.Value)); break;
+                                case "UInt32": f.SetValue(obj, Convert.ToUInt32(value.Value)); break;
+                                case "Char": f.SetValue(obj, Convert.ToChar(value.Value)); break;
+                                case "Single": f.SetValue(obj, Convert.ToSingle(value.Value)); break;
+                                case "Double": f.SetValue(obj, Convert.ToDouble(value.Value)); break;
+                                case "Int64": f.SetValue(obj, Convert.ToInt64(value.Value)); break;
+                                case "UInt64": f.SetValue(obj, Convert.ToUInt64(value.Value)); break;
+                                case "Decimal": f.SetValue(obj, Convert.ToDecimal(value.Value)); break;
+                                case "String": f.SetValue(obj, Convert.ToString(value.Value)); break;
+                                default: f.SetValue(obj, value.Value); break;
+                            }
                             break;
                         case JSONData.DataType.DataTypeDictionary:
                             {
@@ -1185,7 +1265,7 @@ namespace CSharpLike
                         f.SetValue(obj, Enum.Parse(f.PropertyType, value.Value.ToString()));
                         continue;
                     }
-                    if (f.PropertyType.FullName == "KissFramework.KISSJson.JSONData")
+                    if (f.PropertyType.FullName == "CSharpLike.JSONData")
                     {
                         f.SetValue(obj, value);
                         continue;
@@ -1849,21 +1929,32 @@ namespace CSharpLike
                     return Convert.ToDouble(new string(mCharBuff, start, end - start + 1), CultureInfo.InvariantCulture);
                 else
                 {
-                    try
+                    if (c == '-' || (end - start) < 19)
                     {
-                    long v = Convert.ToInt64(new string(mCharBuff, start, end - start + 1));
-                    if (v <= int.MaxValue && v >= int.MinValue)
-                        return (int)v;
-                    else
-                        return v;
-                }
-                    catch
-                    {
-                        ulong v = Convert.ToUInt64(new string(mCharBuff, start, end - start + 1));
-                        if (v <= uint.MaxValue && v >= uint.MinValue)
-                            return (uint)v;
+                        long v = Convert.ToInt64(new string(mCharBuff, start, end - start + 1));
+                        if (v <= int.MaxValue && v >= int.MinValue)
+                            return (int)v;
                         else
                             return v;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            long v = Convert.ToInt64(new string(mCharBuff, start, end - start + 1));
+                            if (v <= int.MaxValue && v >= int.MinValue)
+                                return (int)v;
+                            else
+                                return v;
+                        }
+                        catch
+                        {
+                            ulong v = Convert.ToUInt64(new string(mCharBuff, start, end - start + 1));
+                            if (v <= uint.MaxValue && v >= uint.MinValue)
+                                return (uint)v;
+                            else
+                                return v;
+                        }
                     }
                 }
             }

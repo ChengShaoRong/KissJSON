@@ -1,6 +1,7 @@
 /*
+ *           C#Like
  * KissJson : Keep It Simple Stupid JSON
- * Copyright © 2022-2023 RongRong. All right reserved.
+ * Copyright © 2022-2025 RongRong. All right reserved.
  */
 using System.Text;
 using System.Collections.Generic;
@@ -2303,7 +2304,7 @@ namespace CSharpLike
         {
             JSONData data = new JSONData();
             data.dataType = DataType.DataTypeString;
-            data.strValue = value.ToString("yyyy-MM-dd HH:mm:ss");
+            data.strValue = Convert.ToString(value, KissJson.CultureForConvertDateTime);
             return data;
         }
         /// <summary>
@@ -2317,7 +2318,7 @@ namespace CSharpLike
             {
                 if (value.strValue == null)
                     return new DateTime();
-                return Convert.ToDateTime(value.strValue);
+                return Convert.ToDateTime(value.strValue, KissJson.CultureForConvertDateTime);
             }
             throw new Exception(value.ToString() + " can't convert to DateTime");
         }
@@ -2328,7 +2329,7 @@ namespace CSharpLike
         {
             JSONData data = new JSONData();
             data.dataType = DataType.DataTypeString;
-            data.strValue = value != null ? value?.ToString("yyyy-MM-dd HH:mm:ss") : null;
+            data.strValue = value != null ? Convert.ToString(value.Value, KissJson.CultureForConvertDateTime) : null;
             return data;
         }
         /// <summary>
@@ -2342,7 +2343,7 @@ namespace CSharpLike
             {
                 if (value.strValue == null)
                     return null;
-                return Convert.ToDateTime(value.strValue);
+                return Convert.ToDateTime(value.strValue, KissJson.CultureForConvertDateTime);
             }
             throw new Exception(value.ToString() + " can't convert to DateTime");
         }
@@ -2497,7 +2498,7 @@ namespace CSharpLike
                 case DataType.DataTypeLongNullable: return (double)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (double)value.ulValueNullable;
                 case DataType.DataTypeDoubleNullable: return (double)value.dValueNullable;
-                case DataType.DataTypeString: return Convert.ToDouble(value.strValue);
+                case DataType.DataTypeString: return Convert.ToDouble(value.strValue, KissJson.CultureForConvertFloatAndDouble);
             }
             throw new Exception(value.ToString() + " can't convert to double");
         }
@@ -2528,7 +2529,7 @@ namespace CSharpLike
                 case DataType.DataTypeLongNullable: return (float)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (float)value.ulValueNullable;
                 case DataType.DataTypeDoubleNullable: return (float)value.dValueNullable;
-                case DataType.DataTypeString: return Convert.ToSingle(value.strValue);
+                case DataType.DataTypeString: return Convert.ToSingle(value.strValue, KissJson.CultureForConvertFloatAndDouble);
             }
             throw new Exception(value.ToString() + " can't convert to float");
         }
