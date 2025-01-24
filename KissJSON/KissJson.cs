@@ -1144,8 +1144,8 @@ namespace CSharpLike
                                 case "Int32": f.SetValue(obj, Convert.ToInt32(value.Value)); break;
                                 case "UInt32": f.SetValue(obj, Convert.ToUInt32(value.Value)); break;
                                 case "Char": f.SetValue(obj, Convert.ToChar(value.Value)); break;
-                                case "Single": f.SetValue(obj, Convert.ToSingle(value.Value)); break;
-                                case "Double": f.SetValue(obj, Convert.ToDouble(value.Value)); break;
+                                case "Single": f.SetValue(obj, Convert.ToSingle(value.Value, CultureForConvertFloatAndDouble)); break;
+                                case "Double": f.SetValue(obj, Convert.ToDouble(value.Value, CultureForConvertFloatAndDouble)); break;
                                 case "Int64": f.SetValue(obj, Convert.ToInt64(value.Value)); break;
                                 case "UInt64": f.SetValue(obj, Convert.ToUInt64(value.Value)); break;
                                 case "Decimal": f.SetValue(obj, Convert.ToDecimal(value.Value)); break;
@@ -1926,7 +1926,7 @@ namespace CSharpLike
                     }
                 }
                 if (bDot)
-                    return Convert.ToDouble(new string(mCharBuff, start, end - start + 1), CultureInfo.InvariantCulture);
+                    return Convert.ToDouble(new string(mCharBuff, start, end - start + 1), CultureForConvertFloatAndDouble);
                 else
                 {
                     if (c == '-' || (end - start) < 19)

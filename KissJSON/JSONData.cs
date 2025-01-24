@@ -2892,7 +2892,7 @@ namespace CSharpLike
                             case "NULL":
                                 return null;
                             default:
-                                return Convert.ToDouble(value.strValue);
+                                return Convert.ToDouble(value.strValue, KissJson.CultureForConvertFloatAndDouble);
                         }
                     }
             }
@@ -2935,7 +2935,7 @@ namespace CSharpLike
                             case "NULL":
                                 return null;
                             default:
-                                return Convert.ToSingle(value.strValue);
+                                return Convert.ToSingle(value.strValue, KissJson.CultureForConvertFloatAndDouble);
                         }
                     }
             }

@@ -13,7 +13,7 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChengShaoRong")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
-[assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2022-2023 RongRong")]
+[assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2022-2025 RongRong")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("This is a most simple and stupid JSON for .NET, it\'s the unique one SUPPORT the c" +
     "lass in hot upate script(C#Like) in Unity3D.\r\n\r\n这个是最简单易用.NET可用的JSON, 它是Unity3D的热" +
     "更新方案C#Like的唯一可用的JSON.")]
