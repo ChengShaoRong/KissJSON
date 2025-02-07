@@ -1,5 +1,4 @@
 /*
- *           C#Like
  * KissJson : Keep It Simple Stupid JSON
  * Copyright © 2022-2025 RongRong. All right reserved.
  */
@@ -267,6 +266,11 @@ namespace CSharpLike
             }
         }
         /// <summary>
+        /// Throw exception when should throw exception, otherwise will return default or ignore action and with no exception. 
+        /// Default value is false.
+        /// </summary>
+        public static bool ThrowException = false;
+        /// <summary>
         /// get/set item of this(this is a Dictionary),Same with Dictionary.this[]
         /// </summary>
         public JSONData this[string key]
@@ -275,18 +279,19 @@ namespace CSharpLike
             {
                 if (dataType == DataType.DataTypeDictionary && dictValue != null)
                 {
-                    if (!dictValue.ContainsKey(key))
-                        throw new Exception(ToString() + " !dictValue.ContainsKey(" + key + ")");
-                    return dictValue[key];
+                    if (dictValue.TryGetValue(key, out JSONData value))
+                        return value;
+                    if (ThrowException) throw new Exception(ToString() + " !dictValue.ContainsKey(" + key + ")");
+                    return null;
                 }
-                throw new Exception(ToString() + " not a dictionary");
+                if (ThrowException) throw new Exception(ToString() + " not a dictionary");
+                return null;
             }
             set
             {
                 if (dataType == DataType.DataTypeDictionary && dictValue != null)
                     dictValue[key] = value;
-                else
-                    throw new Exception(ToString() + " not a dictionary");
+                else if (ThrowException) throw new Exception(ToString() + " not a dictionary");
             }
         }
         /// <summary>
@@ -299,21 +304,27 @@ namespace CSharpLike
                 if (dataType == DataType.DataTypeList && listValue != null)
                 {
                     if (index >= listValue.Count)
-                        throw new Exception(ToString() + " index >= listValue.Count");
+                    {
+                        if (ThrowException) throw new Exception(ToString() + " index >= listValue.Count");
+                        return null;
+                    }
                     return listValue[index];
                 }
-                throw new Exception(ToString() + " not a list");
+                if (ThrowException) throw new Exception(ToString() + " not a list");
+                return null;
             }
             set
             {
                 if (dataType == DataType.DataTypeList && listValue != null)
                 {
                     if (index >= listValue.Count)
-                        throw new Exception(ToString() + " index >= listValue.Count");
+                    {
+                        if (ThrowException) throw new Exception(ToString() + " index >= listValue.Count");
+                        return;
+                    }
                     listValue[index] = value;
                 }
-                else
-                    throw new Exception(ToString() + " not a list");
+                else if (ThrowException) throw new Exception(ToString() + " not a list");
             }
         }
         /// <summary>
@@ -847,7 +858,8 @@ namespace CSharpLike
                     }
                     break;
             }
-            throw new Exception("JSONData ConventTo(object obj) only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/DateTime(or with Nullable type '?')." + obj.ToString());
+            if (ThrowException) throw new Exception("JSONData ConventTo(object obj) only support byte/sbyte/short/ushort/int/uint/long/ulong/string/bool/DateTime(or with Nullable type '?')." + obj.ToString());
+            return null;
         }
         /// <summary>
         /// JSONData Convert To target object.
@@ -2103,7 +2115,10 @@ namespace CSharpLike
         public static implicit operator byte(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to byte");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to byte");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (byte)value.iValue;
@@ -2116,7 +2131,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (byte)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToByte(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to byte");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to byte");
+            return default;
         }
         /// <summary>
         /// Implicit convert from byte? to JSONData
@@ -2159,7 +2175,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to byte?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to byte?");
+            return default;
         }
         /// <summary>
         /// Implicit convert from sbyte to JSONData
@@ -2177,7 +2194,10 @@ namespace CSharpLike
         public static implicit operator sbyte(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to sbyte");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to sbyte");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (sbyte)value.iValue;
@@ -2190,7 +2210,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (sbyte)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToSByte(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to sbyte");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to sbyte");
+            return default;
         }
         /// <summary>
         /// Implicit convert from JSONData to sbyte?
@@ -2223,7 +2244,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to sbyte?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to sbyte?");
+            return default;
         }
         /// <summary>
         /// Implicit convert from sbyte? to JSONData
@@ -2251,7 +2273,10 @@ namespace CSharpLike
         public static implicit operator short(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to short");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to short");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (short)value.iValue;
@@ -2264,7 +2289,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (short)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToInt16(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to short");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to short");
+            return default;
         }
         /// <summary>
         /// Implicit convert from ushort to JSONData
@@ -2282,7 +2308,10 @@ namespace CSharpLike
         public static implicit operator ushort(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to ushort");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to ushort");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (ushort)value.iValue;
@@ -2295,7 +2324,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (ushort)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToUInt16(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to ushort");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to ushort");
+            return default;
         }
         /// <summary>
         /// Implicit convert from DateTime to JSONData
@@ -2313,14 +2343,18 @@ namespace CSharpLike
         public static implicit operator DateTime(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to DateTime");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to DateTime");
+                return default;
+            }
             if (value.dataType == DataType.DataTypeString)
             {
                 if (value.strValue == null)
                     return new DateTime();
                 return Convert.ToDateTime(value.strValue, KissJson.CultureForConvertDateTime);
             }
-            throw new Exception(value.ToString() + " can't convert to DateTime");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to DateTime");
+            return default;
         }
         /// <summary>
         /// Implicit convert from DateTime? to JSONData
@@ -2338,14 +2372,15 @@ namespace CSharpLike
         public static implicit operator DateTime?(JSONData value)
         {
             if (value == null)
-                throw null;
+                return null;
             if (value.dataType == DataType.DataTypeString)
             {
                 if (value.strValue == null)
                     return null;
                 return Convert.ToDateTime(value.strValue, KissJson.CultureForConvertDateTime);
             }
-            throw new Exception(value.ToString() + " can't convert to DateTime");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to DateTime");
+            return default;
         }
         /// <summary>
         /// Implicit convert from int to JSONData
@@ -2363,7 +2398,11 @@ namespace CSharpLike
         public static implicit operator int(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to int");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to int");
+                return default;
+
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return value.iValue;
@@ -2376,7 +2415,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (int)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToInt32(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to int");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to int");
+            return default;
         }
         /// <summary>
         /// Implicit convert from uint to JSONData
@@ -2394,7 +2434,10 @@ namespace CSharpLike
         public static implicit operator uint(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to uint");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to uint");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (uint)value.iValue;
@@ -2407,7 +2450,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (uint)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToUInt32(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to uint");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to uint");
+            return default;
         }
         /// <summary>
         /// Implicit convert from long to JSONData
@@ -2425,7 +2469,10 @@ namespace CSharpLike
         public static implicit operator long(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to long");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to long");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return value.iValue;
@@ -2438,7 +2485,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (long)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToInt64(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to long");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to long");
+            return default;
         }
         /// <summary>
         /// Implicit convert from ulong to JSONData
@@ -2456,7 +2504,10 @@ namespace CSharpLike
         public static implicit operator ulong(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to ulong");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to ulong");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (ulong)value.iValue;
@@ -2469,7 +2520,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (ulong)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToUInt64(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to ulong");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to ulong");
+            return default;
         }
         /// <summary>
         /// Implicit convert from double to JSONData
@@ -2487,7 +2539,10 @@ namespace CSharpLike
         public static implicit operator double(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to double");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to double");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return value.iValue;
@@ -2500,7 +2555,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (double)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToDouble(value.strValue, KissJson.CultureForConvertFloatAndDouble);
             }
-            throw new Exception(value.ToString() + " can't convert to double");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to double");
+            return default;
         }
         /// <summary>
         /// Implicit convert from float to JSONData
@@ -2518,7 +2574,10 @@ namespace CSharpLike
         public static implicit operator float(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to float");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to float");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return value.iValue;
@@ -2531,7 +2590,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (float)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToSingle(value.strValue, KissJson.CultureForConvertFloatAndDouble);
             }
-            throw new Exception(value.ToString() + " can't convert to float");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to float");
+            return default;
         }
         /// <summary>
         /// Implicit convert from char to JSONData
@@ -2549,7 +2609,10 @@ namespace CSharpLike
         public static implicit operator char(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to char");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to char");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeInt: return (char)value.iValue;
@@ -2562,7 +2625,8 @@ namespace CSharpLike
                 case DataType.DataTypeDoubleNullable: return (char)value.dValueNullable;
                 case DataType.DataTypeString: return Convert.ToChar(value.strValue);
             }
-            throw new Exception(value.ToString() + " can't convert to char");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to char");
+            return default;
         }
         /// <summary>
         /// Implicit convert from string to JSONData
@@ -2638,7 +2702,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to short?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to short?");
+            return default;
         }
         /// <summary>
         /// Implicit convert from ushort? to JSONData
@@ -2681,7 +2746,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to ushort?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to ushort?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from int? to JSONData
@@ -2724,7 +2790,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to int?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to int?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from uint? to JSONData
@@ -2767,7 +2834,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to uint?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to uint?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from long? to JSONData
@@ -2810,7 +2878,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to long?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to long?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from ulong? to JSONData
@@ -2853,7 +2922,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to ulong?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to ulong?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from double? to JSONData
@@ -2892,11 +2962,12 @@ namespace CSharpLike
                             case "NULL":
                                 return null;
                             default:
-                                return Convert.ToDouble(value.strValue, KissJson.CultureForConvertFloatAndDouble);
+                                return Convert.ToDouble(value.strValue);
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to double?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to double?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from float? to JSONData
@@ -2935,11 +3006,12 @@ namespace CSharpLike
                             case "NULL":
                                 return null;
                             default:
-                                return Convert.ToSingle(value.strValue, KissJson.CultureForConvertFloatAndDouble);
+                                return Convert.ToSingle(value.strValue);
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to float?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to float?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from char? to JSONData
@@ -2982,7 +3054,8 @@ namespace CSharpLike
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to char?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to char?");
+            return null;
         }
         /// <summary>
         /// Implicit convert from bool? to JSONData
@@ -3010,7 +3083,10 @@ namespace CSharpLike
         public static implicit operator bool(JSONData value)
         {
             if (value == null)
-                throw new Exception("JSONData null, can't convert to bool");
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to bool");
+                return default;
+            }
             switch (value.dataType)
             {
                 case DataType.DataTypeBoolean: return value.bValue;
@@ -3036,11 +3112,13 @@ namespace CSharpLike
                             case "FALSE":
                                 return false;
                             default:
-                                throw new Exception(value.ToString() + " can't convert to bool");
+                                if (ThrowException) throw new Exception(value.ToString() + " can't convert to bool");
+                                return default;
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to bool");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to bool");
+            return default;
         }
         /// <summary>
         /// Implicit convert from JSONData to bool?
@@ -3079,11 +3157,13 @@ namespace CSharpLike
                             case "NULL":
                                 return null;
                             default:
-                                throw new Exception(value.ToString() + " can't convert to bool?");
+                                if (ThrowException) throw new Exception(value.ToString() + " can't convert to bool?");
+                                return null;
                         }
                     }
             }
-            throw new Exception(value.ToString() + " can't convert to bool?");
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to bool?");
+            return null;
         }
     }
     #endregion //PrivateImp
