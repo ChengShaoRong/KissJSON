@@ -10,7 +10,7 @@ namespace CSharpLike
     /// <summary>
     /// Stream for read and write
     /// </summary>
-    public class CSL_Stream
+    internal class CSL_Stream
     {
         /// <summary>
         /// Get buff of this stream object

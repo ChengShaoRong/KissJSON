@@ -145,6 +145,167 @@ namespace CSharpLike
                 return data;
             }
         }
+        class _ExcelData_
+        {
+            Dictionary<string, object> cache = new Dictionary<string, object>();
+            JSONData data;
+            Type type;
+#if _CSHARP_LIKE_
+            SType stype;
+            public _ExcelData_(SType type, JSONData json) : this(json)
+            {
+                stype = type;
+            }
+#endif
+            public object Get(string strUniqueKey)
+            {
+                if (cache.TryGetValue(strUniqueKey, out object value))
+                    return value;
+                if (data != null && data.TryGetValue(strUniqueKey, out JSONData json))
+                {
+                    data.RemoveKey(strUniqueKey);
+                    if (type != null)
+                        value = ToObject(type, json);
+#if _CSHARP_LIKE_
+                    else if (stype != null)
+                        value = ToObject(stype, json);
+#endif
+                }
+                cache[strUniqueKey] = value;
+                return value;
+            }
+            public JSONData GetJSON(string strUniqueKey, string strColumnName)
+            {
+                if (data != null
+                    && data.TryGetValue(strUniqueKey, out JSONData json)
+                    && json.TryGetValue(strColumnName, out JSONData ret))
+                    return ret;
+                return null;
+            }
+            public List<string> Titles { get; set; }
+            public List<string> Keys { get; set; }
+            public _ExcelData_(Type type, JSONData json) : this(json)
+            {
+                this.type = type;
+            }
+            public _ExcelData_(JSONData json)
+            {
+                data = json["data"];
+                Titles = json["titles"];
+            }
+        }
+        static Dictionary<string, _ExcelData_> excelDatas = new Dictionary<string, _ExcelData_>();
+        /// <summary>
+        /// Clear Excel data by Type
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        public static void Clear(Type type)
+        {
+            if (type == null) excelDatas.Clear();
+            else excelDatas.Remove(type.Name);
+        }
+        /// <summary>
+        /// Clear Excel data by file name.
+        /// Only for load by file name.
+        /// </summary>
+        /// <param name="fileName">file name of Excel</param>
+        public static void Clear(string fileName)
+        {
+            if (fileName == null) excelDatas.Clear();
+            else excelDatas.Remove(fileName);
+        }
+#if _CSHARP_LIKE_
+        /// <summary>
+        /// Clear Excel data by SType
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        public static void Clear(SType type)
+        {
+            if (type == null) excelDatas.Clear();
+            else excelDatas.Remove(type.Name);
+        }
+        /// <summary>
+        /// Get Excel data by unique key
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <param name="strUniqueKey">Unique key of the Excel data</param>
+        /// <returns>Excel data</returns>
+        public static object Get(SType type, string strUniqueKey) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Get(strUniqueKey) : null;
+        /// <summary>
+        /// Load Excel data
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <param name="json">Source KissJSON object</param>
+        public static void Load(SType type, JSONData json) => excelDatas[type.Name] = new _ExcelData_(type, json);
+        /// <summary>
+        /// Load Excel data by file name.
+        /// That for mothed `GetJSON`.
+        /// </summary>
+        /// <param name="fileName">File name of Excel data</param>
+        /// <param name="json">Source KissJSON object</param>
+        public static void Load(string fileName, JSONData json) => excelDatas[fileName] = new _ExcelData_(json);
+#endif
+        /// <summary>
+        /// Get Excel data by unique key
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <param name="strUniqueKey">Unique key of the Excel data</param>
+        /// <returns>Excel data</returns>
+        public static object Get(Type type, string strUniqueKey) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Get(strUniqueKey) : null;
+        /// <summary>
+        /// Get JSON data of the Excel data by unique key and column name.
+        /// Use this must call `public static void Load(string fileName, JSONData json)` once.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="strUniqueKey"></param>
+        /// <param name="strColumnName"></param>
+        /// <returns>JSON data</returns>
+        public static JSONData GetJSON(string fileName, string strUniqueKey, string strColumnName) => excelDatas.TryGetValue(fileName, out _ExcelData_ excel) ? excel.GetJSON(strUniqueKey, strColumnName) : null;
+        /// <summary>
+        /// Load Excel data
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <param name="json">Source KissJSON object</param>
+        public static void Load(Type type, JSONData json) => excelDatas[type.Name] = new _ExcelData_(type, json);
+        /// <summary>
+        /// Load Excel data
+        /// </summary>
+        /// <param name="type">Type of Excel data, it's for hot update script</param>
+        /// <param name="json">Source KissJSON object</param>
+        public static void Load(object type, JSONData json)
+        {
+            if (type == null) return;
+#if _CSHARP_LIKE_
+            if (type is SType) { Load(type as SType, json); return; }
+#endif
+            Load(type as Type, json);
+        }
+        /// <summary>
+        /// Get Excel data by unique key
+        /// </summary>
+        /// <param name="type">Type of Excel data, it's for hot update script</param>
+        /// <param name="strUniqueKey">Unique key of the Excel data</param>
+        /// <returns>Excel data</returns>
+        public static object Get(object type, string strUniqueKey)
+        {
+            if (type == null) return null;
+#if _CSHARP_LIKE_
+            if (type is SType) return Get(type as SType, strUniqueKey);
+#endif
+            return Get(type as Type, strUniqueKey);
+        }
+        /// <summary>
+        /// Clear Excel data
+        /// </summary>
+        /// <param name="type">Type of Excel data, it's for hot update script</param>
+        public static void Clear(object type)
+        {
+            if (type == null) { excelDatas.Clear(); return; }
+#if _CSHARP_LIKE_
+            if (type is SType) { Clear(type as SType); return; }
+#endif
+            Clear(type as Type);
+        }
         /// <summary>
         /// Compress byte array using GZipStream
         /// </summary>
@@ -303,12 +464,12 @@ namespace CSharpLike
                         {
                             
                             if (value == null)
-                                sb.AppendFormat("\"{0}\":\"1970-01-01 00:00:00\",", f.Name);
+                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime));
                             else
-                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString(CultureForConvertDateTime));
                         }
                         else
-                            sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"));
+                            sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString(CultureForConvertDateTime));
                         break;
                     default:
                         if (valueTypeFullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.String,"))
@@ -347,14 +508,14 @@ namespace CSharpLike
                                         {
                                             foreach (DictionaryEntry item in dic)
                                             {
-                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? "1970-01-01 00:00:00" : ((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime) : ((DateTime)item.Value).ToString(CultureForConvertDateTime));
                                             }
                                         }
                                         else
                                         {
                                             foreach (DictionaryEntry item in dic)
                                             {
-                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? "1970-01-01 00:00:00" : ((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime) : ((DateTime)item.Value).ToString(CultureForConvertDateTime));
                                             }
                                         }
                                         sb.Remove(sb.Length - 1, 1);
@@ -506,15 +667,15 @@ namespace CSharpLike
                                             foreach (var item in list)
                                             {
                                                 if (item == null)
-                                                    sb.Append("\"1970-01-01 00:00:00\",");
+                                                    sb.Append("\"" + (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime) + "\",");
                                                 else
-                                                    sb.Append(((DateTime)value).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                    sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                             }
                                         }
                                         else
                                         {
                                             foreach (var item in list)
-                                                sb.Append(((DateTime)value).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                         }
                                         sb.Remove(sb.Length - 1, 1);
                                     }
@@ -627,12 +788,12 @@ namespace CSharpLike
                         if (valueTypeNullable)
                         {
                             if (value == null)
-                                sb.AppendFormat("\"{0}\":\"1970-01-01 00:00:00\",", f.Name);
+                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime));
                             else
-                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString(CultureForConvertDateTime));
                         }
                         else
-                            sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"));
+                            sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, ((DateTime)value).ToString(CultureForConvertDateTime));
                         break;
                     default:
                         if (valueTypeFullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.String,"))
@@ -671,14 +832,14 @@ namespace CSharpLike
                                         {
                                             foreach (DictionaryEntry item in dic)
                                             {
-                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? "1970-01-01 00:00:00" : ((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value == null ? (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime) : ((DateTime)item.Value).ToString(CultureForConvertDateTime));
                                             }
                                         }
                                         else
                                         {
                                             foreach (DictionaryEntry item in dic)
                                             {
-                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, ((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, ((DateTime)item.Value).ToString(CultureForConvertDateTime));
                                             }
                                         }
                                         sb.Remove(sb.Length - 1, 1);
@@ -830,15 +991,15 @@ namespace CSharpLike
                                             foreach (var item in list)
                                             {
                                                 if (item == null)
-                                                    sb.Append("\"1970-01-01 00:00:00\",");
+                                                    sb.Append("\"" + (new DateTime(1970, 1, 1)).ToString(CultureForConvertDateTime) + "\",");
                                                 else
-                                                    sb.Append(((DateTime)value).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                    sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                             }
                                         }
                                         else
                                         {
                                             foreach (var item in list)
-                                                sb.Append(((DateTime)value).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                         }
                                         sb.Remove(sb.Length - 1, 1);
                                     }
@@ -1095,6 +1256,64 @@ namespace CSharpLike
                                     }
                                     member.Value.value = newDics;
                                 }
+                                else if (FullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.Int32,"))
+                                {
+                                    string strType = FullName;
+                                    RemoveDictionaryInt32(ref strType);
+                                    RemoveNullable(ref strType);
+                                    var newDics = ((Type)member.Value.type).Assembly.CreateInstance(FullName) as IDictionary;
+                                    Dictionary<string, JSONData> dics = value.Value as Dictionary<string, JSONData>;
+                                    switch (strType)
+                                    {
+                                        case "System.String":
+                                        case "System.SByte":
+                                        case "System.UInt16":
+                                        case "System.UInt32":
+                                        case "System.UInt64":
+                                        case "System.Byte":
+                                        case "System.Int16":
+                                        case "System.Int32":
+                                        case "System.Int64":
+                                        case "System.Boolean":
+                                        case "System.Single":
+                                        case "System.Double":
+                                            foreach (var dic in dics)
+                                                newDics.Add(Convert.ToInt32(dic.Key), dic.Value != null ? dic.Value.Value : null);
+                                            break;
+                                        case "System.DateTime":
+                                            foreach (var dic in dics)
+                                            {
+                                                if (dic.Value != null)
+                                                    newDics.Add(Convert.ToInt32(dic.Key), (DateTime)dic.Value.Value);
+                                                else
+                                                    newDics.Add(Convert.ToInt32(dic.Key), null);
+                                            }
+                                            break;
+                                        case "System.Object":
+                                            {
+                                                string keyword = obj.type.GetMember(member.Key).type.Keyword.Substring(45);
+                                                CSL_Type iType = HotUpdateManager.vm.GetTypeByKeyword(keyword.Substring(0, keyword.Length - 1)).type;
+                                                Type t = iType;
+                                                SType st = iType;
+                                                if (t != null)
+                                                {
+                                                    foreach (var dic in dics)
+                                                        if (!IsSkip(dic.Value))
+                                                            newDics.Add(Convert.ToInt32(dic.Key), _ToObject(t, dic.Value));
+                                                }
+                                                else
+                                                {
+                                                    foreach (var dic in dics)
+                                                        if (!IsSkip(dic.Value))
+                                                            newDics.Add(Convert.ToInt32(dic.Key), _ToObject(st, dic.Value));
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    member.Value.value = newDics;
+                                }
                                 else if (!IsSkip(value))
                                 {
                                     Type t = member.Value.type;
@@ -1337,6 +1556,48 @@ namespace CSharpLike
                                     }
                                     f.SetValue(obj, newDics);
                                 }
+                                else if (f.FieldType.FullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.Int32,"))
+                                {
+                                    string strType = f.FieldType.FullName;
+                                    RemoveDictionaryInt32(ref strType);
+                                    RemoveNullable(ref strType);
+                                    Dictionary<string, JSONData> dics = value.Value as Dictionary<string, JSONData>;
+                                    var newDics = f.FieldType.Assembly.CreateInstance(f.FieldType.FullName) as IDictionary;
+                                    Type subType = _GetType(strType);
+                                    switch (strType)
+                                    {
+                                        case "System.String":
+                                        case "System.SByte":
+                                        case "System.UInt16":
+                                        case "System.UInt32":
+                                        case "System.UInt64":
+                                        case "System.Byte":
+                                        case "System.Int16":
+                                        case "System.Int32":
+                                        case "System.Int64":
+                                        case "System.Boolean":
+                                        case "System.Single":
+                                        case "System.Double":
+                                            foreach (var dic in dics)
+                                                newDics.Add(Convert.ToInt32(dic.Key), dic.Value != null ? dic.Value.Value : null);
+                                            break;
+                                        case "System.DateTime":
+                                            foreach (var dic in dics)
+                                            {
+                                                if (dic.Value != null)
+                                                    newDics.Add(Convert.ToInt32(dic.Key), (DateTime)dic.Value.Value);
+                                                else
+                                                    newDics.Add(Convert.ToInt32(dic.Key), null);
+                                            }
+                                            break;
+                                        default:
+                                            foreach (var dic in dics)
+                                                if (!IsSkip(dic.Value))
+                                                    newDics.Add(Convert.ToInt32(dic.Key), _ToObject(subType, dic.Value));
+                                            break;
+                                    }
+                                    f.SetValue(obj, newDics);
+                                }
                                 else
                                 {
                                     if (!IsSkip(value))
@@ -1472,6 +1733,48 @@ namespace CSharpLike
                                     }
                                     f.SetValue(obj, newDics);
                                 }
+                                else if (f.PropertyType.FullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.Int32,"))
+                                {
+                                    string strType = f.PropertyType.FullName;
+                                    RemoveDictionaryInt32(ref strType);
+                                    RemoveNullable(ref strType);
+                                    Dictionary<string, JSONData> dics = value.Value as Dictionary<string, JSONData>;
+                                    var newDics = f.PropertyType.Assembly.CreateInstance(f.PropertyType.FullName) as IDictionary;
+                                    Type subType = _GetType(strType);
+                                    switch (strType)
+                                    {
+                                        case "System.String":
+                                        case "System.SByte":
+                                        case "System.UInt16":
+                                        case "System.UInt32":
+                                        case "System.UInt64":
+                                        case "System.Byte":
+                                        case "System.Int16":
+                                        case "System.Int32":
+                                        case "System.Int64":
+                                        case "System.Boolean":
+                                        case "System.Single":
+                                        case "System.Double":
+                                            foreach (var dic in dics)
+                                                newDics.Add(Convert.ToInt32(dic.Key), dic.Value != null ? dic.Value.Value : null);
+                                            break;
+                                        case "System.DateTime":
+                                            foreach (var dic in dics)
+                                            {
+                                                if (dic.Value != null)
+                                                    newDics.Add(Convert.ToInt32(dic.Key), (DateTime)dic.Value.Value);
+                                                else
+                                                    newDics.Add(Convert.ToInt32(dic.Key), null);
+                                            }
+                                            break;
+                                        default:
+                                            foreach (var dic in dics)
+                                                if (!IsSkip(dic.Value))
+                                                    newDics.Add(Convert.ToInt32(dic.Key), _ToObject(subType, dic.Value));
+                                            break;
+                                    }
+                                    f.SetValue(obj, newDics);
+                                }
                                 else
                                 {
                                     if (!IsSkip(value))
@@ -1565,6 +1868,22 @@ namespace CSharpLike
         {
             bool bRet = false;
             if (str.StartsWith("System.Collections.Generic.Dictionary`2[[System.String,"))
+            {
+                bRet = true;
+                int i = str.IndexOf(']');
+                str = str.Substring(i + 3);
+                i = str.IndexOf(',');
+                if (i > 0)
+                    str = str.Substring(0, i);
+                else if (str.EndsWith("]"))
+                    str = str.Substring(0, str.Length - 1);
+            }
+            return bRet;
+        }
+        static bool RemoveDictionaryInt32(ref string str)
+        {
+            bool bRet = false;
+            if (str.StartsWith("System.Collections.Generic.Dictionary`2[[System.Int32,"))
             {
                 bRet = true;
                 int i = str.IndexOf(']');
@@ -1673,10 +1992,10 @@ namespace CSharpLike
                             if (member.Value.value == null)
                                 sb.AppendFormat("\"{0}\":null,", member.Key);
                             else
-                                sb.AppendFormat("\"{0}\":\"{1}\",", member.Key, ((DateTime)member.Value.value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                sb.AppendFormat("\"{0}\":\"{1}\",", member.Key, ((DateTime)member.Value.value).ToString(CultureForConvertDateTime));
                         }
                         else
-                            sb.AppendFormat("\"{0}\":\"{1}\",", member.Key, ((DateTime)member.Value.value).ToString("yyyy-MM-dd HH:mm:ss"));
+                            sb.AppendFormat("\"{0}\":\"{1}\",", member.Key, ((DateTime)member.Value.value).ToString(CultureForConvertDateTime));
                         break;
                     default:
                         if (valueTypeFullName.StartsWith("System.Collections.Generic.Dictionary`2[[System.String,"))
@@ -1710,12 +2029,17 @@ namespace CSharpLike
                                         if (bNullable)
                                         {
                                             foreach (DictionaryEntry item in dic)
-                                                sb.AppendFormat("\"{0}\":{1},", item.Key, item.Value == null ? "null" : ((DateTime)item.Value).ToString("\"yyyy-MM-dd HH:mm:ss\""));
+                                            {
+                                                if (item.Value == null)
+                                                    sb.AppendFormat("\"{0}\":null,", item.Key);
+                                                else
+                                                    sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, ((DateTime)item.Value).ToString(CultureForConvertDateTime));
+                                            }
                                         }
                                         else
                                         {
                                             foreach (DictionaryEntry item in dic)
-                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, ((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss"));
+                                                sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, ((DateTime)item.Value).ToString(CultureForConvertDateTime));
                                         }
                                         sb.Remove(sb.Length - 1, 1);
                                     }
@@ -1868,13 +2192,13 @@ namespace CSharpLike
                                                 if (item == null)
                                                     sb.Append("null,");
                                                 else
-                                                    sb.Append(((DateTime)item).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                    sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                             }
                                         }
                                         else
                                         {
                                             foreach (var item in list)
-                                                sb.Append(((DateTime)item).ToString("\"yyyy-MM-dd HH:mm:ss\","));
+                                                sb.Append("\"" + ((DateTime)item).ToString(CultureForConvertDateTime) + "\",");
                                         }
                                         sb.Remove(sb.Length - 1, 1);
                                     }

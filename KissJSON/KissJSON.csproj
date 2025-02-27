@@ -10,9 +10,9 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/ChengShaoRong/KissJSON</PackageProjectUrl>
-    <AssemblyVersion>1.0.11.0</AssemblyVersion>
-    <FileVersion>1.0.11.0</FileVersion>
-    <Version>1.0.11</Version>
+    <AssemblyVersion>1.0.12.0</AssemblyVersion>
+    <FileVersion>1.0.12.0</FileVersion>
+    <Version>1.0.12</Version>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
     <PackageTags>JSON,C#Like</PackageTags>

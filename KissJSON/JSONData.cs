@@ -2371,7 +2371,7 @@ namespace CSharpLike
             if (value.dataType == DataType.DataTypeString)
             {
                 if (value.strValue == null)
-                    return new DateTime();
+                    return new DateTime(1970, 1, 1);
                 return Convert.ToDateTime(value.strValue, KissJson.CultureForConvertDateTime);
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to DateTime");
