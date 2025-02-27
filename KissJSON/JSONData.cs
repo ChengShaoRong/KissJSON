@@ -19,7 +19,7 @@ namespace CSharpLike
         /// <summary>
         /// Data type of the JSON
         /// </summary>
-        public enum DataType : sbyte
+        public enum DataType : byte
         {
             /// <summary>
             /// This JSON object is null
@@ -171,6 +171,27 @@ namespace CSharpLike
             data.dataType = DataType.DataTypeList;
             return data;
         }
+        static Dictionary<Type, MethodInfo> mMethodInfos = null;
+        /// <summary>
+        /// Get implicit function by Type
+        /// </summary>
+        /// <param name="type">Specific type</param>
+        /// <returns>Method infomation</returns>
+        public static MethodInfo GetImplicit(Type type)
+        {
+            if (type == null)
+                return null;
+            if (mMethodInfos == null)
+            {
+                mMethodInfos = new Dictionary<Type, MethodInfo>();
+                foreach (MethodInfo mi in typeof(JSONData).GetMethods())
+                {
+                    if (mi.Name == "op_Implicit")
+                        mMethodInfos[mi.ReturnType] = mi;
+                }
+            }
+            return mMethodInfos[type];
+        }
         /// <summary>
         /// the value of this JSONData
         /// </summary>
@@ -231,12 +252,12 @@ namespace CSharpLike
         {
             if (sourceJsonData == null)
                 return null;
-            switch(sourceJsonData.dataType)
+            switch (sourceJsonData.dataType)
             {
                 case DataType.DataTypeDictionary:
                     {
                         JSONData json = NewDictionary();
-                        foreach(var one in sourceJsonData.Value as Dictionary<string, JSONData>)
+                        foreach (var one in sourceJsonData.Value as Dictionary<string, JSONData>)
                         {
                             json.Add(one.Key, DeepClone(one.Value));
                         }
@@ -819,7 +840,7 @@ namespace CSharpLike
         {
             if (obj == null)
                 return null;
-            switch(obj.GetType().Name)
+            switch (obj.GetType().Name)
             {
                 case "Byte": return (byte)obj;
                 case "SByte": return (sbyte)obj;
@@ -3142,7 +3163,7 @@ namespace CSharpLike
                 case DataType.DataTypeNull: return null;
                 case DataType.DataTypeString:
                     {
-                        switch(value.strValue)
+                        switch (value.strValue)
                         {
                             case "true":
                             case "True":
@@ -3164,6 +3185,85 @@ namespace CSharpLike
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to bool?");
             return null;
+        }
+        internal static void ToBinaryData(JSONData value, CSL_Stream stream)
+        {
+            stream.Write((byte)value.dataType);
+            switch (value.dataType)
+            {
+                case DataType.DataTypeDictionary:
+                    stream.Write(value.dictValue.Count);
+                    foreach (var one in value.dictValue)
+                    {
+                        stream.Write(one.Key);
+                        ToBinaryData(one.Value, stream);
+                    }
+                    break;
+                case DataType.DataTypeList:
+                    stream.Write(value.listValue.Count);
+                    foreach (JSONData one in value.listValue)
+                    {
+                        ToBinaryData(one, stream);
+                    }
+                    break;
+                case DataType.DataTypeString: stream.Write(value.strValue); break;
+                case DataType.DataTypeBoolean: stream.Write(value.bValue); break;
+                case DataType.DataTypeInt: stream.Write(value.iValue); break;
+                case DataType.DataTypeLong: stream.Write(value.lValue); break;
+                case DataType.DataTypeULong: stream.Write(value.ulValue); break;
+                case DataType.DataTypeDouble: stream.Write(value.dValue); break;
+                case DataType.DataTypeBooleanNullable: stream.Write(value.bValueNullable); break;
+                case DataType.DataTypeIntNullable: stream.Write(value.iValueNullable); break;
+                case DataType.DataTypeLongNullable: stream.Write(value.lValueNullable); break;
+                case DataType.DataTypeULongNullable: stream.Write(value.ulValueNullable); break;
+                case DataType.DataTypeDoubleNullable: stream.Write(value.dValueNullable); break;
+                case DataType.DataTypeNull: break;
+            }
+        }
+        internal static void ToJSONData(JSONData value, CSL_Stream stream)
+        {
+            stream.Read(out byte dt);
+            value.dataType = (DataType)dt;
+            switch (value.dataType)
+            {
+                case DataType.DataTypeDictionary:
+                    {
+                        value.dictValue = new Dictionary<string, JSONData>();
+                        stream.Read(out int count);
+                        for (int i = 0; i < count; i++)
+                        {
+                            stream.Read(out string key);
+                            JSONData data = new JSONData();
+                            ToJSONData(data, stream);
+                            value[key] = data;
+                        }
+                    }
+                    break;
+                case DataType.DataTypeList:
+                    {
+                        value.listValue = new List<JSONData>();
+                        stream.Read(out int count);
+                        for (int i = 0; i < count; i++)
+                        {
+                            JSONData data = new JSONData();
+                            ToJSONData(data, stream);
+                            value.Add(data);
+                        }
+                    }
+                    break;
+                case DataType.DataTypeString: stream.Read(out value.strValue); break;
+                case DataType.DataTypeBoolean: stream.Read(out value.bValue); break;
+                case DataType.DataTypeInt: stream.Read(out value.iValue); break;
+                case DataType.DataTypeLong: stream.Read(out value.lValue); break;
+                case DataType.DataTypeULong: stream.Read(out value.ulValue); break;
+                case DataType.DataTypeDouble: stream.Read(out value.dValue); break;
+                case DataType.DataTypeBooleanNullable: stream.Read(out value.bValueNullable); break;
+                case DataType.DataTypeIntNullable: stream.Read(out value.iValueNullable); break;
+                case DataType.DataTypeLongNullable: stream.Read(out value.lValueNullable); break;
+                case DataType.DataTypeULongNullable: stream.Read(out value.ulValueNullable); break;
+                case DataType.DataTypeDoubleNullable: stream.Read(out value.dValueNullable); break;
+                case DataType.DataTypeNull: break;
+            }
         }
     }
     #endregion //PrivateImp

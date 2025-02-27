@@ -12,6 +12,8 @@ using CSharpLike.Internal;
 using System.Reflection;
 using System.Collections;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 
 namespace CSharpLike
 {
@@ -51,6 +53,144 @@ namespace CSharpLike
         {
             get { return KISSJsonImp.ignoreNull; }
             set { KISSJsonImp.ignoreNull = value; }
+        }
+        /// <summary>
+        /// Convert JSONData to binary JSON data.
+        /// Loading binary JSON file is abuot 20 times faster than string JSON file.
+        /// And the size is very smaller too, only about 5% percent of the string JSON file.
+        /// The binary JSON file weakness is unreadable.
+        /// </summary>
+        /// <param name="value">The JSON need to be convert</param>
+        /// <param name="bCompress">Whether compress data. Default value is true</param>
+        /// <returns></returns>
+        public static byte[] ToBinaryData(JSONData value, bool bCompress = true)
+        {
+            if (value == null)
+            {
+                if (JSONData.ThrowException) throw new Exception("JSONData null, can't convert to byte[]");
+                return default;
+            }
+            CSL_Stream stream = new CSL_Stream();
+            Array.Copy(mHeader, 0, stream.buff, 0, mHeader.Length);
+            stream.pos = mHeader.Length;
+            stream.Write(bCompress);
+            JSONData.ToBinaryData(value, stream);
+            if (bCompress)
+            {
+                int length = mHeader.Length + 1;
+                byte[] compressBuff = Compress(stream.buff, length, stream.pos - length);
+                byte[] finalBuff = new byte[compressBuff.Length + length];
+                Array.Copy(stream.buff, finalBuff, length);
+                Array.Copy(compressBuff, 0, finalBuff, length, compressBuff.Length);
+                return finalBuff;
+            }
+            return stream.GetBuff();
+        }
+        /// <summary>
+        /// Convert binary/string JSON data to JSONData object.
+        /// Convert binary JSON file is abuot 20 times faster than string JSON file, and only has 5% size of the string JSON file;
+        /// Usage:
+        /// e.g.
+        ///  JSONData json = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
+        ///  
+        /// e.g.
+        /// using (UnityWebRequest uwr = UnityWebRequest.Get(configJsonUrl))
+        /// {
+        ///     yield return uwr.SendWebRequest();
+        ///     if (string.IsNullOrEmpty(uwr.error))
+        ///         JSONData json = KissJson.ToJSONData(uwr.downloadHandler.data);
+        /// }
+        /// </summary>
+        /// <param name="value">Binary JSON data or normal string JSON data. Normal string JSON data MUST using UTF8 file format, no matter with bom or not.</param>
+        /// <returns>JSONData object</returns>
+        public static JSONData ToJSONData(byte[] value)
+        {
+            if (value == null || value.Length == 0)
+                return null;
+            bool bNotMatch = mHeader.Length > value.Length;
+            if (!bNotMatch)
+            {
+                for (int i = 0; i < mHeader.Length && i < value.Length; i++)
+                {
+                    if (mHeader[i] != value[i])
+                    {
+                        bNotMatch = true;
+                        break;
+                    }
+                }
+            }
+            if (bNotMatch)//Is normal JSON string
+            {
+                if (value.Length >= 3
+                    && value[0] == 0xef
+                    && value[1] == 0xbb
+                    && value[2] == 0xbf)
+                    return ToJSONData((new UTF8Encoding(false)).GetString(value, 3, value.Length - 3));//With UTF8 bom
+                else
+                    return ToJSONData(Encoding.UTF8.GetString(value));//No UTF8 bom
+            }
+            else//Is binary JSON
+            {
+                JSONData data = new JSONData();
+                CSL_Stream stream = new CSL_Stream(value);
+                stream.pos = mHeader.Length;
+                stream.Read(out bool bCompress);
+                if (bCompress)
+                {
+                    stream.buff = Decompress(stream.buff, stream.pos, stream.buff.Length - stream.pos);
+                    stream.pos = 0;
+                    stream.maxSize = stream.buff.Length;
+                }
+                JSONData.ToJSONData(data, stream);
+                return data;
+            }
+        }
+        /// <summary>
+        /// Compress byte array using GZipStream
+        /// </summary>
+        /// <param name="buff">The source array.</param>
+        /// <param name="offset">The offset at which the source array begins.</param>
+        /// <param name="count">The length of the source array from that offset.</param>
+        /// <returns>Compressed byte array</returns>
+        public static byte[] Compress(byte[] buff, int offset = 0, int count = 0)
+        {
+            if (count == 0)
+                count = buff.Length - offset;
+            //Compress with zip
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                using (GZipStream zipStream = new GZipStream(outStream, CompressionMode.Compress, true))
+                {
+                    zipStream.Write(buff, offset, count);
+                    zipStream.Close();
+                    return outStream.ToArray();
+                }
+            }
+        }
+        /// <summary>
+        /// Decompress byte array using GZipStream
+        /// </summary>
+        /// <param name="buff">The source array.</param>
+        /// <param name="offset">The offset at which the source array begins.</param>
+        /// <param name="count">The length of the source array from that offset.</param>
+        /// <returns>Decompressed byte array</returns>
+        public static byte[] Decompress(byte[] buff, int offset = 0, int count = 0)
+        {
+            if (count == 0)
+                count = buff.Length - offset;
+            //Decompress with zip
+            using (MemoryStream inputStream = new MemoryStream(buff, offset, count))
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    using (GZipStream zipStream = new GZipStream(inputStream, CompressionMode.Decompress))
+                    {
+                        zipStream.CopyTo(outStream);
+                        zipStream.Close();
+                        return outStream.ToArray();
+                    }
+                }
+            }
         }
         /// <summary>
         /// Convert object to JSONData
@@ -2073,6 +2213,7 @@ namespace CSharpLike
                 return DeserializeCharsToArray(input.ToCharArray());
             }
         }
+        static byte[] mHeader = Encoding.UTF8.GetBytes("KissJSON");
 #endregion //Internal implementation
     }
 }
