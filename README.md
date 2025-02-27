@@ -295,6 +295,17 @@ Not formatting JSON string:
 	Console.WriteLine(notClone.ToJson());
 ```
 
+>*  Convert Binary JSON file between JSONData object
+```
+	JSONData object => Binary JSON file
+	JSONData data = JSONData.NewDictionary();
+	data["test"] = 1;
+	File.WriteAllBytes("test.json", JSONData.ToBinaryData(data));
+	
+	Binary JSON file => JSONData object
+	JSONData data = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
+```
+
 ***
 
 * **可与JSONData之间互转的内置类型**
@@ -572,4 +583,15 @@ Not formatting JSON string:
 	data["i"] = 100;//修改'data'对象,不会影响到'clone'对象的数值.
 	Console.WriteLine(clone.ToJson());
 	Console.WriteLine(notClone.ToJson());
+```
+
+>*  二进制JSON文件 互转 JSONData对象
+```
+	JSONData对象 => 二进制JSON文件
+	JSONData data = JSONData.NewDictionary();
+	data["test"] = 1;
+	File.WriteAllBytes("test.json", JSONData.ToBinaryData(data));
+	
+	二进制JSON文件 => JSONData对象
+	JSONData data = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
 ```
