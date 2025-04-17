@@ -148,7 +148,7 @@ namespace CSharpLike
         class _ExcelData_
         {
             Dictionary<string, object> cache = new Dictionary<string, object>();
-            JSONData data;
+            JSONData table;
             Type type;
 #if _CSHARP_LIKE_
             SType stype;
@@ -161,9 +161,9 @@ namespace CSharpLike
             {
                 if (cache.TryGetValue(strUniqueKey, out object value))
                     return value;
-                if (data != null && data.TryGetValue(strUniqueKey, out JSONData json))
+                if (table != null && table.TryGetValue(strUniqueKey, out JSONData json))
                 {
-                    data.RemoveKey(strUniqueKey);
+                    table.RemoveKey(strUniqueKey);
                     if (type != null)
                         value = ToObject(type, json);
 #if _CSHARP_LIKE_
@@ -176,13 +176,13 @@ namespace CSharpLike
             }
             public JSONData GetJSON(string strUniqueKey, string strColumnName)
             {
-                if (data != null
-                    && data.TryGetValue(strUniqueKey, out JSONData json)
+                if (table != null
+                    && table.TryGetValue(strUniqueKey, out JSONData json)
                     && json.TryGetValue(strColumnName, out JSONData ret))
                     return ret;
                 return null;
             }
-            public List<string> Titles { get; set; }
+            public List<string> Headers { get; set; }
             public List<string> Keys { get; set; }
             public _ExcelData_(Type type, JSONData json) : this(json)
             {
@@ -190,8 +190,11 @@ namespace CSharpLike
             }
             public _ExcelData_(JSONData json)
             {
-                data = json["data"];
-                Titles = json["titles"];
+                table = json["table"];
+                Headers = json["headers"];
+                Keys = new List<string>();
+                foreach (string str in (table.Value as Dictionary<string, JSONData>).Keys)
+                    Keys.Add(str);
             }
         }
         static Dictionary<string, _ExcelData_> excelDatas = new Dictionary<string, _ExcelData_>();
@@ -232,6 +235,19 @@ namespace CSharpLike
         /// <returns>Excel data</returns>
         public static object Get(SType type, string strUniqueKey) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Get(strUniqueKey) : null;
         /// <summary>
+        /// Get Excel data keys.
+        /// It's not sorted keys, just the order in your excel file.
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Keys that not sorted, just the order in your excel file.</returns>
+        public static List<string> GetKeys(SType type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Keys : new List<string>();
+        /// <summary>
+        /// Get Excel data headers (column names).
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Headers</returns>
+        public static List<string> GetHeaders(SType type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Headers : new List<string>();
+        /// <summary>
         /// Load Excel data
         /// </summary>
         /// <param name="type">Type of Excel data</param>
@@ -252,6 +268,19 @@ namespace CSharpLike
         /// <param name="strUniqueKey">Unique key of the Excel data</param>
         /// <returns>Excel data</returns>
         public static object Get(Type type, string strUniqueKey) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Get(strUniqueKey) : null;
+        /// <summary>
+        /// Get Excel data keys.
+        /// It's not sorted keys, just the order in your excel file..
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Keys that not sorted, just the order in your excel file.</returns>
+        public static List<string> GetKeys(Type type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Keys : new List<string>();
+        /// <summary>
+        /// Get Excel data headers (column names).
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Headers</returns>
+        public static List<string> GetHeaders(Type type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Headers : new List<string>();
         /// <summary>
         /// Get JSON data of the Excel data by unique key and column name.
         /// Use this must call `public static void Load(string fileName, JSONData json)` once.
@@ -281,6 +310,22 @@ namespace CSharpLike
             Load(type as Type, json);
         }
         /// <summary>
+        /// Synchronizing load all Excel data by Type.
+        /// </summary>
+        /// <param name="type">Type of your data. e.g. typeof(ItemJSON)</param>
+        /// <param name="fileName">File name in AssetBundle</param>
+        public static void Load(object type, string fileName)
+        {
+            byte[] buff = File.ReadAllBytes(fileName);
+            if (buff != null)
+            {
+                if (type is string)
+                    Load(type as string, ToJSONData(buff));
+                else
+                    Load(type, ToJSONData(buff));
+            }
+        }
+        /// <summary>
         /// Get Excel data by unique key
         /// </summary>
         /// <param name="type">Type of Excel data, it's for hot update script</param>
@@ -295,6 +340,10 @@ namespace CSharpLike
             return Get(type as Type, strUniqueKey);
         }
         /// <summary>
+        /// Clear all Excel data
+        /// </summary>
+        public static void ClearAll() => excelDatas.Clear();
+        /// <summary>
         /// Clear Excel data
         /// </summary>
         /// <param name="type">Type of Excel data, it's for hot update script</param>
@@ -305,6 +354,33 @@ namespace CSharpLike
             if (type is SType) { Clear(type as SType); return; }
 #endif
             Clear(type as Type);
+        }
+        /// <summary>
+        /// Get Excel data keys.
+        /// It's not sorted keys, just the order in your excel file.
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Keys that not sorted, just the order in your excel file.</returns>
+        public static List<string> GetKeys(object type)
+        {
+            if (type == null) return new List<string>();
+#if _CSHARP_LIKE_
+            if (type is SType) return GetKeys(type as SType);
+#endif
+            return GetKeys(type as Type);
+        }
+        /// <summary>
+        /// Get Excel data headers (column names).
+        /// </summary>
+        /// <param name="type">Type of Excel data</param>
+        /// <returns>Headers</returns>
+        public static List<string> GetHeaders(object type)
+        {
+            if (type == null) return new List<string>();
+#if _CSHARP_LIKE_
+            if (type is SType) return GetKeys(type as SType);
+#endif
+            return GetKeys(type as Type);
         }
         /// <summary>
         /// Compress byte array using GZipStream
