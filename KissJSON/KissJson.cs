@@ -164,11 +164,14 @@ namespace CSharpLike
                 if (table != null && table.TryGetValue(strUniqueKey, out JSONData json))
                 {
                     table.RemoveKey(strUniqueKey);
+                    JSONData jsonDic = JSONData.NewDictionary();
+                    for (int i = 0, max = Math.Min(Headers.Count, json.Count); i < max; i++)
+                        jsonDic[Headers[i]] = json[i];
                     if (type != null)
-                        value = ToObject(type, json);
+                        value = ToObject(type, jsonDic);
 #if _CSHARP_LIKE_
                     else if (stype != null)
-                        value = ToObject(stype, json);
+                        value = ToObject(stype, jsonDic);
 #endif
                 }
                 cache[strUniqueKey] = value;
@@ -177,9 +180,12 @@ namespace CSharpLike
             public JSONData GetJSON(string strUniqueKey, string strColumnName)
             {
                 if (table != null
-                    && table.TryGetValue(strUniqueKey, out JSONData json)
-                    && json.TryGetValue(strColumnName, out JSONData ret))
-                    return ret;
+                    && table.TryGetValue(strUniqueKey, out JSONData json))
+                {
+                    int index = Headers.IndexOf(strColumnName);
+                    if (index >= 0 && index < json.Count)
+                        return json[index];
+                }
                 return null;
             }
             public List<string> Headers { get; set; }
