@@ -308,12 +308,12 @@ Not formatting JSON string:
 
 >*  Convert Enum between JSONData object
 ```
-	JSONData object => Enum (direct assignment)
+	Enum => JSONData object (direct assignment)
 	JSONData data = JSONData.NewDictionary();
 	data["testEnum"] = TestHotUpdateEnum.Morning;
 	JSONData testEnum = TestHotUpdateEnum.Afternoon;
 	
-	Enum => JSONData object (Force convert to base enum type and then force convert to enum type)
+	JSONData object => Enum (Force convert to base enum type and then force convert to enum type)
 	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
 ```
 
@@ -609,11 +609,11 @@ Not formatting JSON string:
 
 >*  枚举 互转 JSONData对象
 ```
-	JSONData对象 => 枚举 (直接赋值)
+	枚举 => JSONData对象 (直接赋值)
 	JSONData data = JSONData.NewDictionary();
 	data["testEnum"] = TestHotUpdateEnum.Morning;
 	JSONData testEnum = TestHotUpdateEnum.Afternoon;
 	
-	枚举 => JSONData对象 (必须先转为枚举的基类再强转枚举)
+	JSONData对象 => 枚举 (必须先转为枚举的基类再强转枚举)
 	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
 ```
