@@ -306,6 +306,17 @@ Not formatting JSON string:
 	JSONData data = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
 ```
 
+>*  Convert Enum between JSONData object
+```
+	JSONData object => Enum (direct assignment)
+	JSONData data = JSONData.NewDictionary();
+	data["testEnum"] = TestHotUpdateEnum.Morning;
+	JSONData testEnum = TestHotUpdateEnum.Afternoon;
+	
+	Enum => JSONData object (Force convert to base enum type and then force convert to enum type)
+	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
+```
+
 ***
 
 * **可与JSONData之间互转的内置类型**
@@ -594,4 +605,15 @@ Not formatting JSON string:
 	
 	二进制JSON文件 => JSONData对象
 	JSONData data = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
+```
+
+>*  枚举 互转 JSONData对象
+```
+	JSONData对象 => 枚举 (直接赋值)
+	JSONData data = JSONData.NewDictionary();
+	data["testEnum"] = TestHotUpdateEnum.Morning;
+	JSONData testEnum = TestHotUpdateEnum.Afternoon;
+	
+	枚举 => JSONData对象 (必须先转为枚举的基类再强转枚举)
+	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
 ```
