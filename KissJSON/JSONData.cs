@@ -956,14 +956,18 @@ namespace CSharpLike
             }
             return obj;
         }
+        static bool IsInValidList(ref JSONData value)
+        {
+            if (value == null) return true;
+            if (value.dataType == DataType.DataTypeString) value = KissJson.ToJSONData(value.strValue);
+            return value == null || value.dataType != DataType.DataTypeList;
+        }
         /// <summary>
         /// Implicit convert from List&lt;byte&gt; to JSONData;
         /// </summary>
         public static implicit operator JSONData(List<byte> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -973,8 +977,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<byte>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<byte> data = new List<byte>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -985,9 +988,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<sbyte> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -997,8 +998,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<sbyte>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<sbyte> data = new List<sbyte>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1009,9 +1009,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<short> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1021,8 +1019,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<short>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<short> data = new List<short>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1033,9 +1030,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<ushort> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1045,8 +1040,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<ushort>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<ushort> data = new List<ushort>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1057,9 +1051,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<int> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1069,8 +1061,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<int>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<int> data = new List<int>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1081,9 +1072,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<uint> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1093,8 +1082,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<uint>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<uint> data = new List<uint>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1105,9 +1093,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<long> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1117,8 +1103,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<long>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<long> data = new List<long>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1129,9 +1114,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<ulong> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1141,8 +1124,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<ulong>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<ulong> data = new List<ulong>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1153,9 +1135,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<float> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1165,8 +1145,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<float>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<float> data = new List<float>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1177,9 +1156,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<double> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1189,8 +1166,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<double>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<double> data = new List<double>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1201,9 +1177,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<bool> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1213,8 +1187,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<bool>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<bool> data = new List<bool>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1225,9 +1198,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<char> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1237,8 +1208,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<char>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<char> data = new List<char>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1249,9 +1219,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<string> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1261,8 +1229,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<string>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<string> data = new List<string>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1273,8 +1240,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<JSONData>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<JSONData> data = new List<JSONData>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1285,9 +1251,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<byte?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1297,8 +1261,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<byte?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<byte?> data = new List<byte?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1309,9 +1272,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<sbyte?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1321,8 +1282,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<sbyte?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<sbyte?> data = new List<sbyte?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1333,9 +1293,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<short?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1345,8 +1303,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<short?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<short?> data = new List<short?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1357,9 +1314,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<ushort?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1369,8 +1324,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<ushort?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<ushort?> data = new List<ushort?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1381,9 +1335,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<int?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1393,8 +1345,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<int?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<int?> data = new List<int?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1405,9 +1356,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<uint?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1417,8 +1366,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<uint?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<uint?> data = new List<uint?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1429,9 +1377,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<long?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1441,8 +1387,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<long?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<long?> data = new List<long?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1453,9 +1398,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<ulong?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1465,8 +1408,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<ulong?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<ulong?> data = new List<ulong?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1477,9 +1419,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<float?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1489,8 +1429,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<float?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<float?> data = new List<float?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1501,9 +1440,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<double?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1513,8 +1450,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<double?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<double?> data = new List<double?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1525,9 +1461,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<bool?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1537,8 +1471,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<bool?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<bool?> data = new List<bool?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1549,9 +1482,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(List<char?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeList;
-            data.listValue = new List<JSONData>();
+            JSONData data = NewList();
             foreach (var item in value)
                 data.listValue.Add(item);
             return data;
@@ -1561,8 +1492,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator List<char?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeList)
-                return null;
+            if (IsInValidList(ref value)) return null;
             List<char?> data = new List<char?>();
             foreach (var item in value.listValue)
                 data.Add(item);
@@ -1573,20 +1503,23 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, bool> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
+        }
+        static bool IsInValidDictionary(ref JSONData value)
+        {
+            if (value == null) return true;
+            if (value.dataType == DataType.DataTypeString) value = KissJson.ToJSONData(value.strValue);
+            return value == null || value.dataType != DataType.DataTypeDictionary;
         }
         /// <summary>
         /// Implicit convert from JSONData to Dictionary&lt;string, bool&gt;
         /// </summary>
         public static implicit operator Dictionary<string, bool>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, bool> data = new Dictionary<string, bool>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1597,9 +1530,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, byte> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1609,8 +1540,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, byte>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, byte> data = new Dictionary<string, byte>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1621,9 +1551,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, sbyte> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1633,8 +1561,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, sbyte>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, sbyte> data = new Dictionary<string, sbyte>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1645,9 +1572,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, short> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1657,8 +1582,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, short>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, short> data = new Dictionary<string, short>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1669,9 +1593,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, ushort> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1681,8 +1603,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, ushort>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, ushort> data = new Dictionary<string, ushort>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1693,9 +1614,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, int> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1705,8 +1624,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, int>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, int> data = new Dictionary<string, int>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1717,9 +1635,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, uint> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1729,8 +1645,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, uint>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, uint> data = new Dictionary<string, uint>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1741,9 +1656,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, long> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1753,8 +1666,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, long>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, long> data = new Dictionary<string, long>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1765,9 +1677,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, ulong> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1777,8 +1687,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, ulong>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, ulong> data = new Dictionary<string, ulong>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1789,9 +1698,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, float> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1801,8 +1708,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, float>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, float> data = new Dictionary<string, float>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1813,9 +1719,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, double> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1825,8 +1729,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, double>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, double> data = new Dictionary<string, double>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1837,9 +1740,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, string> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1849,8 +1750,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, string>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, string> data = new Dictionary<string, string>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1861,9 +1761,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, bool?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1873,8 +1771,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, bool?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, bool?> data = new Dictionary<string, bool?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1885,9 +1782,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, byte?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1897,8 +1792,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, byte?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, byte?> data = new Dictionary<string, byte?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1909,9 +1803,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, sbyte?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1921,8 +1813,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, sbyte?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, sbyte?> data = new Dictionary<string, sbyte?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1933,9 +1824,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, short?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1945,8 +1834,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, short?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, short?> data = new Dictionary<string, short?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1957,9 +1845,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, ushort?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1969,8 +1855,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, ushort?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, ushort?> data = new Dictionary<string, ushort?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -1981,9 +1866,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, int?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -1993,8 +1876,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, int?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, int?> data = new Dictionary<string, int?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2005,9 +1887,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, uint?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -2017,8 +1897,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, uint?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, uint?> data = new Dictionary<string, uint?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2029,9 +1908,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, long?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -2041,8 +1918,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, long?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, long?> data = new Dictionary<string, long?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2053,9 +1929,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, ulong?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -2065,8 +1939,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, ulong?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, ulong?> data = new Dictionary<string, ulong?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2077,9 +1950,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, float?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -2089,8 +1960,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, float?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, float?> data = new Dictionary<string, float?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2101,9 +1971,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator JSONData(Dictionary<string, double?> value)
         {
-            JSONData data = new JSONData();
-            data.dataType = DataType.DataTypeDictionary;
-            data.dictValue = new Dictionary<string, JSONData>();
+            JSONData data = NewDictionary();
             foreach (var item in value)
                 data.dictValue.Add(item.Key, item.Value);
             return data;
@@ -2113,8 +1981,7 @@ namespace CSharpLike
         /// </summary>
         public static implicit operator Dictionary<string, double?>(JSONData value)
         {
-            if (value == null || value.dataType != DataType.DataTypeDictionary)
-                return null;
+            if (IsInValidDictionary(ref value)) return null;
             Dictionary<string, double?> data = new Dictionary<string, double?>();
             foreach (var item in value.dictValue)
                 data.Add(item.Key, item.Value);
@@ -2404,6 +2271,25 @@ namespace CSharpLike
             return default;
         }
         /// <summary>
+        /// Implicit convert from Enum to JSONData
+        /// </summary>
+        public static implicit operator JSONData(Enum value)
+        {
+            if (value == null)
+                return new JSONData() { dataType = DataType.DataTypeInt, iValue  = 0 };
+            switch(value.GetType().GetEnumUnderlyingType().Name)
+            {
+                case "Byte":
+                case "SByte":
+                case "Int16":
+                case "UInt16":
+                case "Int32": return new JSONData() { dataType = DataType.DataTypeInt, iValue = Convert.ToInt32(value) };
+                case "UInt32":
+                case "UInt64": return new JSONData() { dataType = DataType.DataTypeULong, ulValue = Convert.ToUInt64(value) };
+                default: return new JSONData() { dataType = DataType.DataTypeLong, lValue = Convert.ToInt64(value) };
+            }
+        }
+        /// <summary>
         /// Implicit convert from int to JSONData
         /// </summary>
         public static implicit operator JSONData(int value)
@@ -2430,10 +2316,12 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (int)value.lValue;
                 case DataType.DataTypeULong: return (int)value.ulValue;
                 case DataType.DataTypeDouble: return (int)value.dValue;
+                case DataType.DataTypeBoolean: return value.bValue ? 1 : 0;
                 case DataType.DataTypeIntNullable: return (int)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (int)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (int)value.ulValueNullable;
                 case DataType.DataTypeDoubleNullable: return (int)value.dValueNullable;
+                case DataType.DataTypeBooleanNullable: return value.bValueNullable.Value ? 1 : 0;
                 case DataType.DataTypeString: return Convert.ToInt32(value.strValue);
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to int");
@@ -2465,10 +2353,12 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (uint)value.lValue;
                 case DataType.DataTypeULong: return (uint)value.ulValue;
                 case DataType.DataTypeDouble: return (uint)value.dValue;
+                case DataType.DataTypeBoolean: return value.bValue ? 1u : 0u;
                 case DataType.DataTypeIntNullable: return (uint)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (uint)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (uint)value.ulValueNullable;
                 case DataType.DataTypeDoubleNullable: return (uint)value.dValueNullable;
+                case DataType.DataTypeBooleanNullable: return value.bValueNullable.Value ? 1u : 0u;
                 case DataType.DataTypeString: return Convert.ToUInt32(value.strValue);
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to uint");
@@ -2500,10 +2390,12 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return (long)value.ulValue;
                 case DataType.DataTypeDouble: return (long)value.dValue;
+                case DataType.DataTypeBoolean: return value.bValue ? 1L : 0L;
                 case DataType.DataTypeIntNullable: return (long)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (long)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (long)value.ulValueNullable;
                 case DataType.DataTypeDoubleNullable: return (long)value.dValueNullable;
+                case DataType.DataTypeBooleanNullable: return value.bValueNullable.Value ? 1L : 0L;
                 case DataType.DataTypeString: return Convert.ToInt64(value.strValue);
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to long");
@@ -2535,10 +2427,12 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (ulong)value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return (ulong)value.dValue;
+                case DataType.DataTypeBoolean: return value.bValue ? 1UL : 0UL;
                 case DataType.DataTypeIntNullable: return (ulong)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (ulong)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (ulong)value.lValueNullable;
                 case DataType.DataTypeDoubleNullable: return (ulong)value.dValueNullable;
+                case DataType.DataTypeBooleanNullable: return value.bValueNullable.Value ? 1UL : 0UL;
                 case DataType.DataTypeString: return Convert.ToUInt64(value.strValue);
             }
             if (ThrowException) throw new Exception(value.ToString() + " can't convert to ulong");

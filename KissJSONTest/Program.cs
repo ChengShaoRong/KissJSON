@@ -156,6 +156,11 @@ namespace KissJSONTest
             Console.WriteLine(clone.ToJson());
             Console.WriteLine(notClone.ToJson());
 
+            //Enum => JSONData
+            JSONData testJSONData2Enum = TestHotUpdateEnum.Afternoon;//direct assignment
+            //JSONData => Enum
+            TestHotUpdateEnum testEnum2JSONData = (TestHotUpdateEnum)(int)testJSONData2Enum;//Force convert to base enum type and then force convert to enum type
+
             Console.ReadKey();
         }
     }
