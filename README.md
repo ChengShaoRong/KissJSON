@@ -317,6 +317,67 @@ Not formatting JSON string:
 	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
 ```
 
+>*  Initialize JSONData object
+```
+	///Built-in type:
+	JSONData a = 1;
+	JSONData b = "abc";
+	JSONData c = true;
+	
+	///Type List: List<Built-in type>
+	JSONData d = new List<int>(){1,2,3};
+	JSONData e = new JSONData(){1,2,3};
+	
+	///Type Dictionary: Dictionary<string, Built-in type>
+	JSONData f = new Dictionary<string,int>(){{"a",1},{"b",2}};
+	JSONData g = new JSONData(){{"a",1},{"b",2}};
+	JSONData h = new JSONData(){{"a",1},{"b","c"}};
+
+	///JSON string
+	JSONData i = KissJson.ToJSONData("{\"a\":1}");
+
+	///Binary JSON file or normal text JSON file using UTF8 format (Regardless of whether BOM is included or not)
+	JSONData j = KissJson.ToJSONData(File.ReadAllBytes("123.json"));
+
+	///class or stuct
+	TestJsonData testJsonData = new TestJsonData();//Normal class object
+	JSONData i = KissJson.ToJSONData(testJsonData);
+```
+
+>*  Traveling through sub objects in a JSONData object using foreach
+```
+	///Type List: List<Built-in type>
+	JSONData list = new JSONData(){1,2,3};
+	//The recommended method cannot use 'var', only `JSONData` can be used
+	foreach(JSONData item in list)
+		Console.WriteLine($"List:{item}");
+	//This method can use `var`
+	foreach(var item in list.Value as List<JSONData>)
+		Console.WriteLine($"List:{item}");
+	//Not recommended is a convenient but inefficient method (as it copies a List<int>), which can be done using ` var `.
+	//You can using `List<int>` if your JSON data is `int`, and using `List<string>` if your JSON data is `string`...
+	foreach(var item in (List<int>)list)
+		Console.WriteLine($"List:{item}");
+	
+	///Type Dictionary: Dictionary<string, Built-in type>
+	JSONData dic = new JSONData(){{"a",1},{"b",2}};
+	//The recommended method cannot use 'var', only `KeyValuePair<string, JSONData>` can be used
+	foreach(KeyValuePair<string, JSONData> item in dic)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+	//This method can use `var`
+	foreach(var item in dic.Value as Dictionary<string,JSONData>)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+	//Not recommended is a convenient but inefficient method (as it copies a Dictionary<string,string>), which can be done using ` var `.
+	//You can using `Dictionary<string,int>` if your JSON data is `int`, and using `Dictionary<string,string>` if your JSON data is `string`,and using `Dictionary<string,object>` if your JSON data mix with `string` and `int`...
+	foreach(var item in (Dictionary<string,int>)dic)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+
+	//Other type can't using foreach
+	JSONData i = 1;
+	foreach(JSONData item in i)//This line will throw an exception during runtime
+		Console.WriteLine($"Crash:{item}");
+```
+
 ***
 
 * **可与JSONData之间互转的内置类型**
@@ -616,4 +677,65 @@ Not formatting JSON string:
 	
 	JSONData对象 => 枚举 (必须先转为枚举的基类再强转枚举)
 	TestHotUpdateEnum enumTest = (TestHotUpdateEnum)(int)testEnum;
+```
+
+>*  初始化JSONData对象
+```
+	///基础类型
+	JSONData a = 1;
+	JSONData b = "abc";
+	JSONData c = true;
+	
+	///列表类型:List<基础类型>
+	JSONData d = new List<int>(){1,2,3};
+	JSONData e = new JSONData(){1,2,3};
+	
+	///字典类型:Dictionary<string, 基础类型>
+	JSONData f = new Dictionary<string,int>(){{"a",1},{"b",2}};
+	JSONData g = new JSONData(){{"a",1},{"b",2}};
+	JSONData h = new JSONData(){{"a",1},{"b","c"}};
+
+	///JSON字符串
+	JSONData i = KissJson.ToJSONData("{\"a\":1}");
+
+	///二进制JSON文件或普通UTF8格式JSON文件(无论是否带BOM)
+	JSONData j = KissJson.ToJSONData(File.ReadAllBytes("123.json"));
+
+	///类或结构
+	TestJsonData testJsonData = new TestJsonData();//普通的类对象
+	JSONData i = KissJson.ToJSONData(testJsonData);
+```
+
+>*  用foreach游历JSONData对象里的子对象
+```
+	///列表类型:List<基础类型>
+	JSONData list = new JSONData(){1,2,3};
+	//推荐的方式,不可以使用`var`,只能使用JSONData
+	foreach(JSONData item in list)
+		Console.WriteLine($"List:{item}");
+	//这种方式可以使用`var`
+	foreach(var item in list.Value as List<JSONData>)
+		Console.WriteLine($"List:{item}");
+	//不推荐的很方便但低效方式(因为会复制一个List<int>出来),可以使用`var`.
+	//如果数据是int就用List<int>,是string就用List<string>...
+	foreach(var item in (List<int>)list)
+		Console.WriteLine($"List:{item}");
+	
+	///字典类型:Dictionary<string, 基础类型>
+	JSONData dic = new JSONData(){{"a",1},{"b",2}};
+	//推荐的方式,不可以使用`var`,只能使用`KeyValuePair<string, JSONData>`
+	foreach(KeyValuePair<string, JSONData> item in dic)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+	//这种方式可以使用`var`
+	foreach(var item in dic.Value as Dictionary<string,JSONData>)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+	//不推荐的很方便但低效方式(因为会复制一个Dictionary<string,int>出来),可以使用`var`.
+	//如果数据是int就用Dictionary<string,int>,是string就用Dictionary<string,string>,是混合就用Dictionary<string,object>...
+	foreach(var item in (Dictionary<string,int>)dic)
+		Console.WriteLine($"Dictionary:{item.Key}={item.Value}");
+
+	//其他类型不能使用foreach
+	JSONData i = 1;
+	foreach(JSONData item in i)//这行在运行时会抛出异常
+		Console.WriteLine($"Crash:{item}");
 ```

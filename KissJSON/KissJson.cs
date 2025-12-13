@@ -1,7 +1,7 @@
 /*
  *           C#Like
  * KissJson : Keep It Simple Stupid JSON
- * Copyright © 2022-2025 RongRong. All right reserved.
+ * Copyright © 2022-2026 RongRong. All right reserved.
  */
 using System.Text;
 using System.Collections.Generic;
@@ -19,50 +19,65 @@ namespace CSharpLike
 {
     /// <summary>
     /// Mark as don't serialize by KISS JSON
+    /// <br/><br/>Chinese:<br/>标识为不会被KissJSON序列化的
     /// </summary>
     public sealed class KissJsonDontSerialize : Attribute
     {
     }
     /// <summary>
-    /// Mark as serialize Property  by KISS JSON
+    /// Mark as serialize Property by KISS JSON
+    /// <br/><br/>Chinese:<br/>标识为会被KissJSON序列化的属性
     /// </summary>
     public sealed class KissJsonSerializeProperty : Attribute
     {
     }
     /// <summary>
     /// Keep It Simple Stupid JSON.
-    /// Convert to each other between JSONData and JSON string and class/struct object.
-    /// Why I have to this JSON library but not the LitJson/NewtonJson/...?
-    /// Because KissJson is the unique one which SUPPORT the class in hot update script!
+    /// <br/>Convert to each other between JSONData and JSON string and class/struct object.
+    /// <br/>Why I have to use this JSON library but not the LitJson/NewtonJson/...?
+    /// <br/>Because KissJson is the unique one which SUPPORT the class in hot update script!
+    /// <br/><br/>Chinese:<br/>KISS JSON 是Keep It Simple Stupid JSON的缩写.
+    /// <br/>JSON对象和JSON字符串和类/结构体直接互相转换.
+    /// <br/>我为什么必须使用这个JSON库,而不用LitJson/NewtonJson/...这些库?
+    /// <br/>因为这个KissJson是唯一在热更新代码的类可以使用的JSON库,是专门为C#Like热更新方案设计的!
     /// </summary>
     public sealed class KissJson
     {
         /// <summary>
         /// The FormatProvider for 'Convert.ToSingle' and 'Convert.ToDouble'. Default is 'CultureInfo.InvariantCulture'.
+        /// <br/><br/>Chinese:<br/>用于'Convert.ToSingle'和'Convert.ToDouble'格式化的,指定本地化格式.默认为'CultureInfo.InvariantCulture'.
         /// </summary>
         public static CultureInfo CultureForConvertFloatAndDouble { get; set; } = CultureInfo.InvariantCulture;
         /// <summary>
         /// The FormatProvider for 'Convert.ToDateTime'. Default is 'CultureInfo.InvariantCulture'.
         /// You should set this to fit your DateTime format in your JSON string.
+        /// <br/><br/>Chinese:<br/>用于'Convert.ToDateTime'格式化的,指定本地化格式.默认为'CultureInfo.InvariantCulture'.
+        /// 你可以设置你的DateTime在JSON字符串中的格式
         /// </summary>
         public static CultureInfo CultureForConvertDateTime { get; set; } = CultureInfo.InvariantCulture;
         /// <summary>
-        /// ignore null
+        /// Whether ignore null, default false mean not ignore
+        /// <br/><br/>Chinese:<br/>是否忽略null,默认false不忽略.
         /// </summary>
-        public static bool ignoreNull
+        public static bool IgnoreNull
         {
             get { return KISSJsonImp.ignoreNull; }
             set { KISSJsonImp.ignoreNull = value; }
         }
         /// <summary>
         /// Convert JSONData to binary JSON data.
-        /// Loading binary JSON file is abuot 20 times faster than string JSON file.
-        /// And the size is very smaller too, only about 5% percent of the string JSON file.
-        /// The binary JSON file weakness is unreadable.
+        /// <br/>Loading binary JSON file is abuot 20 times faster than string JSON file.
+        /// <br/>If using compressing, the size is very smaller too, only about 10% of the string JSON file.
+        /// <br/>The binary JSON file weakness is unreadable.
+        /// <br/>The binary JSON file start with string KissJSON.
+        /// <br/><br/>Chinese:<br/>把JSON对象转换成二进制JSON格式.
+        /// <br/>加载二进制JSON文件大概会比普通文本JSON文件快约20倍.
+        /// <br/>如果采用GZip压缩的话体积会变得很小,大概原来约1/10.
+        /// <br/>但是二进制JSON文件可读性差.
+        /// <br/>其中二进制的文件以"KissJSON"字符串开头
         /// </summary>
-        /// <param name="value">The JSON need to be convert</param>
-        /// <param name="bCompress">Whether compress data. Default value is true</param>
-        /// <returns></returns>
+        /// <param name="value">The JSON object to be convert<br/><br/>Chinese:<br/>待转换的JSON对象.</param>
+        /// <param name="bCompress">Whether compress data using GZip. Default value is true. <br/><br/>Chinese:<br/>是否采用GZip的压缩,默认true为压缩.</param>
         public static byte[] ToBinaryData(JSONData value, bool bCompress = true)
         {
             if (value == null)
@@ -87,22 +102,34 @@ namespace CSharpLike
             return stream.GetBuff();
         }
         /// <summary>
-        /// Convert binary/string JSON data to JSONData object.
-        /// Convert binary JSON file is abuot 20 times faster than string JSON file, and only has 5% size of the string JSON file;
-        /// Usage:
-        /// e.g.
-        ///  JSONData json = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
-        ///  
-        /// e.g.
-        /// using (UnityWebRequest uwr = UnityWebRequest.Get(configJsonUrl))
-        /// {
-        ///     yield return uwr.SendWebRequest();
-        ///     if (string.IsNullOrEmpty(uwr.error))
-        ///         JSONData json = KissJson.ToJSONData(uwr.downloadHandler.data);
-        /// }
+        /// Convert binary/string JSON file data to JSONData object.
+        /// <br/>Convert binary JSON file is abuot 20 times faster than string JSON file, and only about has 10% size of the string JSON file;
+        /// <br/>Usage:
+        /// <br/>e.g.
+        /// <br/>JSONData json = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
+        /// <br/><br/>e.g.
+        /// <br/>using (UnityWebRequest uwr = UnityWebRequest.Get(configJsonUrl))
+        /// <br/>{
+        /// <br/>    yield return uwr.SendWebRequest();
+        /// <br/>    if (string.IsNullOrEmpty(uwr.error))
+        /// <br/>        JSONData json = KissJson.ToJSONData(uwr.downloadHandler.data);
+        /// <br/>}
+        /// <br/><br/>Chinese:<br/>把二进制或文本JSON文件数据转换成JSON对象.
+        /// <br/>转换二进制文件会比文本JSON文件快约20倍, 而且如果采用压缩的话体积还只大概10%左右的大小;
+        /// <br/>用法:
+        /// <br/>例如
+        /// <br/>JSONData json = JSONData.ToJSONData(File.ReadAllBytes("test.json"));
+        /// <br/><br/>例如
+        /// <br/>using (UnityWebRequest uwr = UnityWebRequest.Get(configJsonUrl))
+        /// <br/>{
+        /// <br/>    yield return uwr.SendWebRequest();
+        /// <br/>    if (string.IsNullOrEmpty(uwr.error))
+        /// <br/>        JSONData json = KissJson.ToJSONData(uwr.downloadHandler.data);
+        /// <br/>}
         /// </summary>
-        /// <param name="value">Binary JSON data or normal string JSON data. Normal string JSON data MUST using UTF8 file format, no matter with bom or not.</param>
-        /// <returns>JSONData object</returns>
+        /// <param name="value">Binary JSON data or normal string JSON data. Normal string JSON data MUST using UTF8 file format, no matter with bom or not.
+        /// <br/><br/>Chinese:<br/>把二进制或文本JSON文件数据.如果是文本JSON文件必须使用UTF8文件格式,有没有带BOM都行.</param>
+        /// <returns>JSONData object<br/><br/>Chinese:<br/>转换好的JSON对象.</returns>
         public static JSONData ToJSONData(byte[] value)
         {
             if (value == null || value.Length == 0)
@@ -205,9 +232,10 @@ namespace CSharpLike
         }
         static Dictionary<string, _ExcelData_> excelDatas = new Dictionary<string, _ExcelData_>();
         /// <summary>
-        /// Clear Excel data by Type
+        /// Clear Excel data by class Type that bind to Excel file
+        /// <br/><br/>Chinese:<br/>根据Excel类的类型清除Excel数据
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
+        /// <param name="type">Type of Excel data (The type of the class that bind to Excel file)<br/><br/>Chinese:<br/>Excel的数据类型(绑定的Excel的类的类型)</param>
         public static void Clear(Type type)
         {
             if (type == null) excelDatas.Clear();
@@ -216,8 +244,9 @@ namespace CSharpLike
         /// <summary>
         /// Clear Excel data by file name.
         /// Only for load by file name.
+        /// <br/><br/>Chinese:<br/>根据Excel文件名来清除Excel数据
         /// </summary>
-        /// <param name="fileName">file name of Excel</param>
+        /// <param name="fileName">file name of Excel <br/><br/>Chinese:<br/>Excel文件名</param>
         public static void Clear(string fileName)
         {
             if (fileName == null) excelDatas.Clear();
@@ -269,44 +298,48 @@ namespace CSharpLike
 #endif
         /// <summary>
         /// Get Excel data by unique key
+        /// <br/><br/>Chinese:<br/>根据唯一键来获取其中一行数据
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
-        /// <param name="strUniqueKey">Unique key of the Excel data</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
+        /// <param name="strUniqueKey">Unique key of the Excel data<br/><br/>Chinese:<br/>唯一的键</param>
         /// <returns>Excel data</returns>
         public static object Get(Type type, string strUniqueKey) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Get(strUniqueKey) : null;
         /// <summary>
-        /// Get Excel data keys.
-        /// It's not sorted keys, just the order in your excel file..
+        /// Get Excel data keys. It's not sorted keys, just the order in your excel file.
+        /// <br/><br/>Chinese:<br/>获取Excel数据的所有键, 这些键没有经过排序,就是你Excel文件的顺序.
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
-        /// <returns>Keys that not sorted, just the order in your excel file.</returns>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
         public static List<string> GetKeys(Type type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Keys : new List<string>();
         /// <summary>
         /// Get Excel data headers (column names).
+        /// <br/><br/>Chinese:<br/>获取Excel文件的标头
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
         /// <returns>Headers</returns>
         public static List<string> GetHeaders(Type type) => excelDatas.TryGetValue(type.Name, out _ExcelData_ excel) ? excel.Headers : new List<string>();
         /// <summary>
         /// Get JSON data of the Excel data by unique key and column name.
         /// Use this must call `public static void Load(string fileName, JSONData json)` once.
+        /// <br/><br/>Chinese:<br/>根据Excel文件名和唯一键和列名获取JSON数据.
+        /// 使用这个之前必须已经曾调用过一次 `public static void Load(string fileName, JSONData json)`
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="strUniqueKey"></param>
-        /// <param name="strColumnName"></param>
-        /// <returns>JSON data</returns>
+        /// <param name="fileName">Excel file name<br/><br/>Chinese:<br/>Excel文件名</param>
+        /// <param name="strUniqueKey">Unique key<br/><br/>Chinese:<br/>唯一键</param>
+        /// <param name="strColumnName">Column name in Excel<br/><br/>Chinese:<br/>Excel列名</param>
         public static JSONData GetJSON(string fileName, string strUniqueKey, string strColumnName) => excelDatas.TryGetValue(fileName, out _ExcelData_ excel) ? excel.GetJSON(strUniqueKey, strColumnName) : null;
         /// <summary>
         /// Load Excel data
+        /// <br/><br/>Chinese:<br/>加载Excel数据
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
-        /// <param name="json">Source KissJSON object</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
+        /// <param name="json">Source KissJSON object that load from Excel file<br/><br/>Chinese:<br/>已经转为JSON对象的Excel文件</param>
         public static void Load(Type type, JSONData json) => excelDatas[type.Name] = new _ExcelData_(type, json);
         /// <summary>
-        /// Load Excel data
+        /// Load Excel data (it's for hot update script in C#Like)
+        /// <br/><br/>Chinese:<br/>加载Excel数据(这是给C#Like热更新代码用的)
         /// </summary>
-        /// <param name="type">Type of Excel data, it's for hot update script</param>
-        /// <param name="json">Source KissJSON object</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON), it's for hot update script in C#Like<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON),这是给C#Like热更新代码用的</param>
+        /// <param name="json">Source KissJSON object that load from Excel file<br/><br/>Chinese:<br/>已经转为JSON对象的Excel文件</param>
         public static void Load(object type, JSONData json)
         {
             if (type == null) return;
@@ -316,10 +349,11 @@ namespace CSharpLike
             Load(type as Type, json);
         }
         /// <summary>
-        /// Synchronizing load all Excel data by Type.
+        /// Synchronizing load all Excel data by type of Excel data that bind to Excel.
+        /// <br/><br/>Chinese:<br/>根据绑定Excel文件的类的类型,以同步方式加载Excel文件.
         /// </summary>
-        /// <param name="type">Type of your data. e.g. typeof(ItemJSON)</param>
-        /// <param name="fileName">File name in AssetBundle</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
+        /// <param name="fileName">Excel file name<br/><br/>Chinese:<br/>Excel文件名</param>
         public static void Load(object type, string fileName)
         {
             byte[] buff = File.ReadAllBytes(fileName);
@@ -332,11 +366,11 @@ namespace CSharpLike
             }
         }
         /// <summary>
-        /// Get Excel data by unique key
+        /// Get Excel data by unique key (it's for hot update script in C#Like)
+        /// <br/><br/>Chinese:<br/>根据唯一键来获取其中一行数据(这是给C#Like热更新代码用的)
         /// </summary>
-        /// <param name="type">Type of Excel data, it's for hot update script</param>
-        /// <param name="strUniqueKey">Unique key of the Excel data</param>
-        /// <returns>Excel data</returns>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON), it's for hot update script in C#Like<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON),这是给C#Like热更新代码用的</param>
+        /// <param name="strUniqueKey">Unique key of the Excel data<br/><br/>Chinese:<br/>根据唯一键</param>
         public static object Get(object type, string strUniqueKey)
         {
             if (type == null) return null;
@@ -347,12 +381,14 @@ namespace CSharpLike
         }
         /// <summary>
         /// Clear all Excel data
+        /// <br/><br/>Chinese:<br/>清除所有已加载的Excel文件
         /// </summary>
         public static void ClearAll() => excelDatas.Clear();
         /// <summary>
-        /// Clear Excel data
+        /// Clear Excel data by class Type that bind to Excel file
+        /// <br/><br/>Chinese:<br/>根据Excel类的类型清除Excel数据
         /// </summary>
-        /// <param name="type">Type of Excel data, it's for hot update script</param>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON), it's for hot update script in C#Like<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON),这是给C#Like热更新代码用的</param>
         public static void Clear(object type)
         {
             if (type == null) { excelDatas.Clear(); return; }
@@ -362,11 +398,10 @@ namespace CSharpLike
             Clear(type as Type);
         }
         /// <summary>
-        /// Get Excel data keys.
-        /// It's not sorted keys, just the order in your excel file.
+        /// Get Excel data keys. It's not sorted keys, just the order in your excel file.
+        /// <br/><br/>Chinese:<br/>获取Excel数据的所有键, 这些键没有经过排序,就是你Excel文件的顺序.
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
-        /// <returns>Keys that not sorted, just the order in your excel file.</returns>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON), it's for hot update script in C#Like<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON),这是给C#Like热更新代码用的</param>
         public static List<string> GetKeys(object type)
         {
             if (type == null) return new List<string>();
@@ -376,10 +411,10 @@ namespace CSharpLike
             return GetKeys(type as Type);
         }
         /// <summary>
-        /// Get Excel data headers (column names).
+        /// Get Excel data keys. It's not sorted keys, just the order in your excel file.
+        /// <br/><br/>Chinese:<br/>获取Excel数据的所有键, 这些键没有经过排序,就是你Excel文件的顺序.
         /// </summary>
-        /// <param name="type">Type of Excel data</param>
-        /// <returns>Headers</returns>
+        /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON), it's for hot update script in C#Like<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON),这是给C#Like热更新代码用的</param>
         public static List<string> GetHeaders(object type)
         {
             if (type == null) return new List<string>();
@@ -390,11 +425,12 @@ namespace CSharpLike
         }
         /// <summary>
         /// Compress byte array using GZipStream
+        /// <br/><br/>Chinese:<br/>使用GZipStream来压缩.
         /// </summary>
-        /// <param name="buff">The source array.</param>
-        /// <param name="offset">The offset at which the source array begins.</param>
-        /// <param name="count">The length of the source array from that offset.</param>
-        /// <returns>Compressed byte array</returns>
+        /// <param name="buff">The source array.<br/><br/>Chinese:<br/>待压缩数据</param>
+        /// <param name="offset">The offset at which the source array begins.<br/><br/>Chinese:<br/>待压缩数据的开始位置</param>
+        /// <param name="count">The length of the source array from that offset.<br/><br/>Chinese:<br/>压缩源数据的长度</param>
+        /// <returns>Compressed byte array<br/><br/>Chinese:<br/>压缩后的数据</returns>
         public static byte[] Compress(byte[] buff, int offset = 0, int count = 0)
         {
             if (count == 0)
@@ -412,11 +448,12 @@ namespace CSharpLike
         }
         /// <summary>
         /// Decompress byte array using GZipStream
+        /// <br/><br/>Chinese:<br/>使用GZipStream来解压.
         /// </summary>
-        /// <param name="buff">The source array.</param>
-        /// <param name="offset">The offset at which the source array begins.</param>
-        /// <param name="count">The length of the source array from that offset.</param>
-        /// <returns>Decompressed byte array</returns>
+        /// <param name="buff">The source array.<br/><br/>Chinese:<br/>待解压数据</param>
+        /// <param name="offset">The offset at which the source array begins.<br/><br/>Chinese:<br/>待解压数据的开始位置</param>
+        /// <param name="count">The length of the source array from that offset.<br/><br/>Chinese:<br/>待解压数据的长度</param>
+        /// <returns>Decompressed byte array<br/><br/>Chinese:<br/>解压后的数据</returns>
         public static byte[] Decompress(byte[] buff, int offset = 0, int count = 0)
         {
             if (count == 0)
@@ -437,8 +474,9 @@ namespace CSharpLike
         }
         /// <summary>
         /// Convert object to JSONData
+        /// <br/><br/>Chinese:<br/>把对象转为JSON对象
         /// </summary>
-        /// <param name="obj">object want to be converted</param>
+        /// <param name="obj">object want to be converted<br/><br/>Chinese:<br/>待转换的对象</param>
         public static JSONData ToJSONData(object obj)
         {
             return ToJSONData(ToJson(obj));
@@ -450,8 +488,10 @@ namespace CSharpLike
         }
 #endif
         /// <summary>
-        /// an object convert to JSON string
+        /// Any object convert to JSON string
+        /// <br/><br/>Chinese:<br/>把任意对象转为JSON字符串
         /// </summary>
+        /// <param name="obj">Any class object or struct object<br/><br/>Chinese:<br/>任意类对象或结构体</param>
         public static string ToJson(object obj)
         {
             if (obj == null)
@@ -475,7 +515,7 @@ namespace CSharpLike
                 object value = f.GetValue(obj);
                 if (value == null)
                 {
-                    if (!ignoreNull)
+                    if (!IgnoreNull)
                     {
                         Type t = f.FieldType;
 #if _CSHARP_LIKE_
@@ -504,7 +544,7 @@ namespace CSharpLike
                     case "System.String":
                         if (value == null)
                         {
-                            if (!ignoreNull)
+                            if (!IgnoreNull)
                                 sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, value);
                         }
                         else
@@ -611,7 +651,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -653,7 +693,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":{1},", item.Key, ToJson(item.Value));
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -681,7 +721,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.AppendFormat("\"{0}\",", item);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -770,7 +810,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.Append(ToJson(item) + ",");
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -800,7 +840,7 @@ namespace CSharpLike
                 object value = f.GetValue(obj);
                 if (value == null)
                 {
-                    if (!ignoreNull)
+                    if (!IgnoreNull)
                     {
                         Type t = f.PropertyType;
 #if _CSHARP_LIKE_
@@ -829,7 +869,7 @@ namespace CSharpLike
                     case "System.String":
                         if (value == null)
                         {
-                            if (!ignoreNull)
+                            if (!IgnoreNull)
                                 sb.AppendFormat("\"{0}\":\"{1}\",", f.Name, value);
                         }
                         else
@@ -935,7 +975,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -977,7 +1017,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":{1},", item.Key, ToJson(item.Value));
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -1005,7 +1045,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.AppendFormat("\"{0}\",", item);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -1094,7 +1134,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.Append(ToJson(item) + ",");
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -1123,9 +1163,10 @@ namespace CSharpLike
         }
         /// <summary>
         /// JSON string convert to JSONData
+        /// <br/><br/>Chinese:<br/>把JSON字符串转为JSON对象
         /// </summary>
-        /// <param name="strJSON">JSON string</param>
-        /// <returns>JSONData</returns>
+        /// <param name="strJSON">JSON string<br/><br/>Chinese:<br/>把JSON字符串</param>
+        /// <returns>JSON object<br/><br/>Chinese:<br/>JSON对象</returns>
         public static JSONData ToJSONData(string strJSON)
         {
             if (strJSON.Length == 0)
@@ -1143,25 +1184,29 @@ namespace CSharpLike
             return null;
         }
         /// <summary>
-        /// cast JSON string to object (class/struct).
-        /// e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), strJson);
-        /// Why not make it like LitJson 'TestJsonData testJsonData = KissJson.ToObject＜TestJsonData>(strJson);'?
-        /// Because that style not support the class in hot update script.
+        /// JSON string convert to object (class/struct).
+        /// <br/>e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// <br/>Why not make it like LitJson 'TestJsonData testJsonData = KissJson.ToObject&lt;TestJsonData&gt;(strJson);'?
+        /// <br/>Because that style not support the class in hot update script.
+        /// <br/><br/>Chinese:<br/>把JSON字符串转为类或结构体
+        /// <br/>例如 TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// <br/>为什么不改成和LitJson一样 'TestJsonData testJsonData = KissJson.ToObject&lt;TestJsonData&gt;(strJson);'?
+        /// <br/>因为C#Like热更新脚本不支持这个写法.
         /// </summary>
-        /// <param name="type">type of object you want to cast</param>
-        /// <param name="strJSON">JSON string</param>
-        /// <returns>object</returns>
+        /// <param name="type">type of object you want to cast<br/><br/>Chinese:<br/>你想要转换成的目标类或结构体</param>
+        /// <param name="strJSON">The source JSON string<br/><br/>Chinese:<br/>源JSON字符串</param>
         public static object ToObject(Type type, string strJSON)
         {
             return ToObject(type, ToJSONData(strJSON));
         }
         /// <summary>
-        /// cast JSONData to object (class/struct).
-        /// e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), jsonData);
+        /// JSONData convert to object (class/struct).
+        /// <br/>e.g. TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), jsonData);
+        /// <br/><br/>Chinese:<br/>把JSON对象转为类或结构体
+        /// <br/>例如 TestJsonData testJsonData = (TestJsonData)KissJson.ToObject(typeof(TestJsonData), jsonData);
         /// </summary>
-        /// <param name="type">type of object you want to cast</param>
-        /// <param name="jsonData">JSONData object</param>
-        /// <returns>object</returns>
+        /// <param name="type">type of object you want to cast<br/><br/>Chinese:<br/>你想要转换成的目标类或结构体</param>
+        /// <param name="jsonData">The source JSON object<br/><br/>Chinese:<br/>源JSON对象</param>
         public static object ToObject(Type type, JSONData jsonData)
         {
             if (jsonData.dataType == JSONData.DataType.DataTypeDictionary)
@@ -1169,31 +1214,73 @@ namespace CSharpLike
             return null;
         }
         /// <summary>
-        /// cast JSON string to objects (class/struct).
-        /// e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// JSON string convert to objects (class/struct)
+        /// <br/>e.g. List&lt;object&gt; testJsonData = KissJson.ToObjects(typeof(TestJsonData), strJson);
+        /// <br/><br/>Chinese:<br/>把JSON对象转为列表(类或结构体)
+        /// <br/>例如 List&lt;object&gt; testJsonData = KissJson.ToObjects(typeof(TestJsonData), strJson);
         /// </summary>
-        /// <param name="type">type of object you want to cast</param>
-        /// <param name="strJSON">JSON string</param>
-        /// <returns>List of object</returns>
+        /// <param name="type">type of object you want to cast<br/><br/>Chinese:<br/>你想要转换成的目标类或结构体</param>
+        /// <param name="strJSON">The source JSON string<br/><br/>Chinese:<br/>源JSON字符串</param>
+        /// <returns>List of objects</returns>
+        [Obsolete("Using ToObjectList instead", false)]
         public static List<object> ToObjects(Type type, string strJSON)
         {
             return ToObjects(type, ToJSONData(strJSON));
         }
         /// <summary>
-        /// cast JSONData to objects (class/struct).
-        /// e.g. List&lt;object&gt; testJsonDdata = KissJson.ToObject(typeof(TestJsonData), strJson);
+        /// cast JSONData to objects (class/struct)(Recommand using ToObjectsEx instead).
+        /// e.g. List&lt;object&gt; testJsonData = KissJson.ToObject(typeof(TestJsonData), strJson);
         /// </summary>
-        /// <param name="type">type of object you want to cast</param>
-        /// <param name="jsonData">JSONData object</param>
-        /// <returns>List of object</returns>
+        /// <param name="type">type of object you want to cast<br/><br/>Chinese:<br/>你想要转换成的目标类或结构体</param>
+        /// <param name="jsonData">The source JSON object<br/><br/>Chinese:<br/>源JSON对象</param>
+        /// <returns>List of objects</returns>
+        [Obsolete("Using ToObjectList instead", false)]
         public static List<object> ToObjects(Type type, JSONData jsonData)
         {
             if (jsonData.dataType == JSONData.DataType.DataTypeList)
             {
                 List<object> list = new List<object>();
-                for (int i = 0; i < jsonData.Count; i++)
+                int count = jsonData.Count;
+                for (int i = 0; i < count; i++)
                     list.Add(ToObject(type, jsonData[i]));
                 return list;
+            }
+            return null;
+        }
+        /// <summary>
+        /// JSON string convert to objects (class/struct).
+        /// <br/>e.g. List&lt;TestJsonData&gt; testJsonData = (List&lt;TestJsonData&gt;)KissJson.ToObjectList(typeof(TestJsonData), strJson);
+        /// <br/><br/>Chinese:<br/>把JSON对象转为类或结构体
+        /// <br/>例如 List&lt;TestJsonData&gt; testJsonData = (List&lt;TestJsonData&gt;)KissJson.ToObjectList(typeof(TestJsonData), strJson);
+        /// </summary>
+        /// <param name="type">type of object you want to cast<br/><br/>Chinese:<br/>你想要转换成的目标类或结构体</param>
+        /// <param name="strJSON">The source JSON string<br/><br/>Chinese:<br/>源JSON字符串</param>
+        /// <returns>List of objects, you must cast by force, e.g. (List&lt;TestJsonData&gt;).
+        /// <br/><br/>Chinese:<br/>最终对象列表,你必须强转一下,例如(List&lt;TestJsonData&gt;)</returns>
+        public static object ToObjectList(Type type, string strJSON)
+        {
+            return ToObjectList(type, ToJSONData(strJSON));
+        }
+        /// <summary>
+        /// cast JSONData to objects (class/struct).
+        /// <br/>e.g. List&lt;TestJsonData&gt; testJsonData = (List&lt;TestJsonData&gt;)KissJson.ToObjectList(typeof(TestJsonData), jsonData);
+        /// <br/><br/>Chinese:<br/>把JSON对象转为类或结构体
+        /// <br/>例如 List&lt;TestJsonData&gt; testJsonData = (List&lt;TestJsonData&gt;)KissJson.ToObjectList(typeof(TestJsonData), jsonData);
+        /// </summary>
+        /// <param name="type">type of object you want to cast</param>
+        /// <param name="jsonData">JSONData object</param>
+        /// <returns>List of objects, you must cast by force, e.g. (List&lt;TestJsonData&gt;).
+        /// <br/><br/>Chinese:<br/>最终对象列表,你必须强转一下,例如(List&lt;TestJsonData&gt;)</returns>
+        public static object ToObjectList(Type type, JSONData jsonData)
+        {
+            if (jsonData.dataType == JSONData.DataType.DataTypeList)
+            {
+                object o = JSONData.CreateList(type);
+                IList list = o as IList;
+                int count = jsonData.Count;
+                for (int i = 0; i < count; i++)
+                    list.Add(ToObject(type, jsonData[i]));
+                return o;
             }
             return null;
         }
@@ -1218,8 +1305,25 @@ namespace CSharpLike
             if (jsonData.dataType == JSONData.DataType.DataTypeList)
             {
                 List<object> list = new List<object>();
-                for (int i = 0; i < jsonData.Count; i++)
+                int count = jsonData.Count;
+                for (int i = 0; i < count; i++)
                     list.Add(ToObject(type, jsonData[i]));
+                return list;
+            }
+            return null;
+        }
+        public static List<SInstance> ToObjectList(SType type, string strJSON)
+        {
+            return ToObjectList(type, ToJSONData(strJSON));
+        }
+        public static List<SInstance> ToObjectList(SType type, JSONData jsonData)
+        {
+            if (jsonData.dataType == JSONData.DataType.DataTypeList)
+            {
+                List<SInstance> list = new List<SInstance>();
+                int count = jsonData.Count;
+                for (int i = 0; i < count; i++)
+                    list.Add(ToObject(type, jsonData[i]) as SInstance);
                 return list;
             }
             return null;
@@ -1476,9 +1580,14 @@ namespace CSharpLike
         /// <summary>
         /// Clear the instance in cache that contain '_uid_' key.
         /// That object from server with '_uid_' will keep in cache and auto sync the value from server.
+        /// if passing null will clear all cache(You may call 'KissJson.ClearCache()' after you logout).
+        /// You should remove it when you don't need that object.
+        /// <br/><br/>Chinese:<br/>清除缓存里带键'_uid_'的数据.
+        /// 那些对象从服务器发回带键'_uid_'会保留在缓存中及自动和服务器的数据同步.
+        /// 如果传入null表示把缓存里的全清了(你应该在退出登录的时候手动调用'KissJson.ClearCache()').
+        /// 你应该清除它,当你不再需要它的时候.
         /// </summary>
-        /// <param name="key">The value of '_uid_', if passing null will clear all cache(You may call 'KissJson.ClearCache()' after you logout).
-        /// You should remove it when you don't need that object.</param>
+        /// <param name="key">The value of '_uid_', default null mean all cache.<br/><br/>Chinese:<br/>JSON对象里'_uid_'的值.如果传入null表示全部</param>
         public static void ClearCache(string key = null)
         {
 #if _CSHARP_LIKE_
@@ -1571,10 +1680,12 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeInt:
                         case JSONData.DataType.DataTypeLong:
                         case JSONData.DataType.DataTypeDouble:
+#if SUPPORT_NULLABLE
                         case JSONData.DataType.DataTypeBooleanNullable:
                         case JSONData.DataType.DataTypeIntNullable:
                         case JSONData.DataType.DataTypeLongNullable:
                         case JSONData.DataType.DataTypeDoubleNullable:
+#endif //SUPPORT_NULLABLE
                             switch (f.FieldType.Name)
                             {
                                 case "Boolean": f.SetValue(obj, Convert.ToBoolean(value.Value)); break;
@@ -1765,10 +1876,12 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeInt:
                         case JSONData.DataType.DataTypeLong:
                         case JSONData.DataType.DataTypeDouble:
+#if SUPPORT_NULLABLE
                         case JSONData.DataType.DataTypeBooleanNullable:
                         case JSONData.DataType.DataTypeIntNullable:
                         case JSONData.DataType.DataTypeLongNullable:
                         case JSONData.DataType.DataTypeDoubleNullable:
+#endif //SUPPORT_NULLABLE
                             f.SetValue(obj, value.Value);
                             break;
                         case JSONData.DataType.DataTypeDictionary:

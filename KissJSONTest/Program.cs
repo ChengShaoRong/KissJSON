@@ -108,14 +108,26 @@ namespace KissJSONTest
             //test looping through the List or Dictionary in JSONData
             foreach (var item in listData3["key3"].Value as List<JSONData>)
             {
-                Console.WriteLine("test looping through the List in JSONData using foreach; listData3[\"key3\"].Value = " + item);//output string2/output 1
+                Console.WriteLine("test looping through the List in JSONData using foreach; stype 1: listData3[\"key3\"].Value = " + item);//output string2/output 1
+            }
+            foreach (var item in listData3["key3"])
+            {
+                Console.WriteLine("test looping through the List in JSONData using foreach; stype 2: listData3[\"key3\"].Value = " + item);//output string2/output 1
+            }
+            foreach (JSONData item in listData3["key3"])
+            {
+                Console.WriteLine("test looping through the List in JSONData using foreach; stype 3: listData3[\"key3\"].Value = " + item);//output string2/output 1
             }
             List<JSONData> tempList = listData3["key3"].Value as List<JSONData>;
             for (int i = 0; i < tempList.Count; i++)
                 Console.WriteLine("test looping through the List in JSONData using for; listData3[\"key3\"].Value = " + tempList[i]);//output string2/output 1
             foreach (var item in listData3["key4"].Value as Dictionary<string, JSONData>)
             {
-                Console.WriteLine("test looping through the Dictionary in JSONData using foreach; listData3[\"key4\"], Key=" + item.Key + ",Value=" + item.Value);//output Key=x,Value=1/output Key=y,Value=2/output Key=z,Value=3
+                Console.WriteLine("test looping through the Dictionary in JSONData using foreach; stype 1: listData3[\"key4\"], Key=" + item.Key + ",Value=" + item.Value);//output Key=x,Value=1/output Key=y,Value=2/output Key=z,Value=3
+            }
+            foreach (KeyValuePair<string, JSONData> item in listData3["key4"])//Must explicitly using `KeyValuePair<string, JSONData>`, can't using `var` instead.
+            {
+                Console.WriteLine("test looping through the Dictionary in JSONData using foreach; stype 2: listData3[\"key4\"], Key=" + item.Key + ",Value=" + item.Value);//output Key=x,Value=1/output Key=y,Value=2/output Key=z,Value=3
             }
 
             //test JSON string => class/struct
@@ -159,7 +171,38 @@ namespace KissJSONTest
             //Enum => JSONData
             JSONData testJSONData2Enum = TestHotUpdateEnum.Afternoon;//direct assignment
             //JSONData => Enum
-            TestHotUpdateEnum testEnum2JSONData = (TestHotUpdateEnum)(int)testJSONData2Enum;//Force convert to base enum type and then force convert to enum type
+            TestHotUpdateEnum testEnum2JSONData = (TestHotUpdateEnum)(int)testJSONData2Enum;//Force convert to base enum type (byte/sbyte/short/ushort/int/uint/long/ulong) first and then force convert to enum type
+
+            JSONData tttt1 = new JSONData(){ 1, 2, 3 };
+            //Recommand this way to foreach the List style JSONData
+            foreach (JSONData one in tttt1)
+            {
+                Console.WriteLine($"Test list1:{one}");
+            }
+            foreach (var one in tttt1.Value as List<JSONData>)
+            {
+                Console.WriteLine($"Test list2:{one}");
+            }
+            //Not recommand this way to foreach the List style JSONData due to it will new a List<int>.
+            foreach (int one in (List<int>)tttt1)
+            {
+                Console.WriteLine($"Test list3:{one}");
+            }
+            JSONData tttt2 = new JSONData { { "aa", 1 },{ "bb", "a" } };
+            //Recommand this way to foreach the List style JSONData
+            foreach (KeyValuePair<string, JSONData> one in tttt2)
+            {
+                Console.WriteLine($"Test Dictionary1:{one.Key}={one.Value}");
+            }
+            foreach (var one in tttt2.Value as Dictionary<string, JSONData>)
+            {
+                Console.WriteLine($"Test Dictionary2:{one.Key}={one.Value}");
+            }
+            //Not recommand this way to foreach the Dictionary style JSONData due to it will new a Dictionary<string, object>.
+            foreach (var one in (Dictionary<string, object>)tttt2)
+            {
+                Console.WriteLine($"Test Dictionary3:{one.Key}={one.Value}");
+            }
 
             Console.ReadKey();
         }
