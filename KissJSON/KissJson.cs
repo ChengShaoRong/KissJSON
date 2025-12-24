@@ -3,6 +3,10 @@
  * KissJson : Keep It Simple Stupid JSON
  * Copyright © 2022-2026 RongRong. All right reserved.
  */
+//Whether spport nullable type, if you will never use the nullable type, you can remove this define `SUPPORT_NULLABLE` to make this `KissJSON.dll` smaller, you also can set that define in project config.
+//Chinese:是否支持可空类型,如果你将不会使用可空类型,你可以把这个`SUPPORT_NULLABLE`定义注释掉,可以使得`KissJSON.dll`更小一些,你也可以在项目设置里设置该宏.
+#define SUPPORT_NULLABLE
+
 using System.Text;
 using System.Collections.Generic;
 using System;
@@ -334,6 +338,35 @@ namespace CSharpLike
         /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
         /// <param name="json">Source KissJSON object that load from Excel file<br/><br/>Chinese:<br/>已经转为JSON对象的Excel文件</param>
         public static void Load(Type type, JSONData json) => excelDatas[type.Name] = new _ExcelData_(type, json);
+#if _CSHARP_LIKE_
+        /// <summary>
+        /// Asynchronous load all Excel data by Type.
+        /// </summary>
+        /// <param name="type">Type of your data. e.g. typeof(ItemJSON)</param>
+        /// <param name="fileName">File name in AssetBundle</param>
+        /// <param name="callback">Callback after initialize done.</param>
+        public static void LoadAsync(object type, string fileName, UnityEngine.Events.UnityAction callback)
+        {
+            DateTime startTime = DateTime.Now;
+            var req = ResourceManager.LoadAssetAsync<UnityEngine.TextAsset>(fileName);
+            req.OnCompleted += (ta) =>
+            {
+                UnityEngine.Debug.Log($"Load `{fileName}` from AssetBundle use time {DateTime.Now.Subtract(startTime).TotalMilliseconds} ms");
+                startTime = DateTime.Now;
+                if (type is string)
+                    Load(type as string, ToJSONData(ta.bytes));
+                else
+                    Load(type, ToJSONData(ta.bytes));
+                UnityEngine.Debug.Log($"Convert `{fileName}` use time {DateTime.Now.Subtract(startTime).TotalMilliseconds} ms");
+                callback?.Invoke();
+            };
+            req.OnError += (error) =>
+            {
+                UnityEngine.Debug.LogError($"Load {fileName} from AssetBundle occur error : {error}");
+                callback?.Invoke();
+            };
+        }
+#endif
         /// <summary>
         /// Load Excel data (it's for hot update script in C#Like)
         /// <br/><br/>Chinese:<br/>加载Excel数据(这是给C#Like热更新代码用的)
@@ -356,6 +389,37 @@ namespace CSharpLike
         /// <param name="fileName">Excel file name<br/><br/>Chinese:<br/>Excel文件名</param>
         public static void Load(object type, string fileName)
         {
+#if _CSHARP_LIKE_
+            DateTime startTime = DateTime.Now;
+#if UNITY_EDITOR
+            if (File.Exists(fileName))
+            {
+                byte[] buff = File.ReadAllBytes(fileName);
+                if (buff != null)
+                {
+                    startTime = DateTime.Now;
+                    if (type is string)
+                        KissJson.Load(type as string, KissJson.ToJSONData(buff));
+                    else
+                        KissJson.Load(type, KissJson.ToJSONData(buff));
+                }
+                return;
+            }
+#endif
+            UnityEngine.TextAsset ta = ResourceManager.LoadAsset<UnityEngine.TextAsset>(fileName);
+            if (ta != null)
+            {
+                UnityEngine.Debug.Log($"Load `{fileName}` from AssetBundle use time {DateTime.Now.Subtract(startTime).TotalMilliseconds} ms");
+                startTime = DateTime.Now;
+                if (type is string)
+                    KissJson.Load(type as string, KissJson.ToJSONData(ta.bytes));
+                else
+                    KissJson.Load(type, KissJson.ToJSONData(ta.bytes));
+                UnityEngine.Debug.Log($"Convert `{fileName}` use time {DateTime.Now.Subtract(startTime).TotalMilliseconds} ms");
+            }
+            else
+                UnityEngine.Debug.LogError($"Load `{fileName}` from AssetBundle error");
+#else
             byte[] buff = File.ReadAllBytes(fileName);
             if (buff != null)
             {
@@ -364,6 +428,7 @@ namespace CSharpLike
                 else
                     Load(type, ToJSONData(buff));
             }
+#endif
         }
         /// <summary>
         /// Get Excel data by unique key (it's for hot update script in C#Like)
@@ -1370,6 +1435,7 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeInt:
                         case JSONData.DataType.DataTypeLong:
                         case JSONData.DataType.DataTypeDouble:
+                        case JSONData.DataType.DataTypeDecimal:
                         case JSONData.DataType.DataTypeBooleanNullable:
                         case JSONData.DataType.DataTypeIntNullable:
                         case JSONData.DataType.DataTypeLongNullable:
@@ -1636,7 +1702,7 @@ namespace CSharpLike
         }
         static object _ToObject(Type type, JSONData jsonObj)
         {
-            if (jsonObj == null)
+            if (jsonObj == null || jsonObj.Count == 0)
                 return null;
             object obj;
             if (jsonObj.ContainsKey("_uid_"))
@@ -1680,6 +1746,7 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeInt:
                         case JSONData.DataType.DataTypeLong:
                         case JSONData.DataType.DataTypeDouble:
+                        case JSONData.DataType.DataTypeDecimal:
 #if SUPPORT_NULLABLE
                         case JSONData.DataType.DataTypeBooleanNullable:
                         case JSONData.DataType.DataTypeIntNullable:
@@ -1876,6 +1943,7 @@ namespace CSharpLike
                         case JSONData.DataType.DataTypeInt:
                         case JSONData.DataType.DataTypeLong:
                         case JSONData.DataType.DataTypeDouble:
+                        case JSONData.DataType.DataTypeDecimal:
 #if SUPPORT_NULLABLE
                         case JSONData.DataType.DataTypeBooleanNullable:
                         case JSONData.DataType.DataTypeIntNullable:
@@ -2119,7 +2187,7 @@ namespace CSharpLike
                     continue;
                 if (member.Value.value == null)
                 {
-                    if (!ignoreNull)
+                    if (!IgnoreNull)
                     {
                         Type t = member.Value.type;
                         SType st = member.Value.type;
@@ -2144,7 +2212,7 @@ namespace CSharpLike
                     case "System.String":
                         if (member.Value.value == null)
                         {
-                            if (!ignoreNull)
+                            if (!IgnoreNull)
                                 sb.AppendFormat("\"{0}\":null,", member.Key);
                         }
                         else
@@ -2247,7 +2315,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":\"{1}\",", item.Key, item.Value);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -2289,7 +2357,7 @@ namespace CSharpLike
                                         {
                                             if (item.Value != null)
                                                 sb.AppendFormat("\"{0}\":{1},", item.Key, ToJson(item.Value));
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.AppendFormat("\"{0}\":null,", item.Key);
                                             else
                                                 count++;
@@ -2317,7 +2385,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.AppendFormat("\"{0}\",", item);
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -2406,7 +2474,7 @@ namespace CSharpLike
                                         {
                                             if (item != null)
                                                 sb.Append(ToJson(item) + ",");
-                                            else if (!ignoreNull)
+                                            else if (!IgnoreNull)
                                                 sb.Append("null,");
                                             else
                                                 count++;
@@ -2697,7 +2765,7 @@ namespace CSharpLike
                         break;
                 start++;
                 if (mCharLenght < start + 1)
-                    return null;
+                    return JSONData.NewDictionary();
                 return DeserializeSingletonObject(ref start);
             }
 
@@ -2723,7 +2791,7 @@ namespace CSharpLike
                         break;
                 start++;
                 if (mCharLenght < start + 1)
-                    return null;
+                    return JSONData.NewList();
                 return DeserializeSingletonArray(ref start);
             }
 

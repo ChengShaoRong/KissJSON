@@ -3,8 +3,8 @@
  * Copyright © 2022-2026 RongRong. All right reserved.
  */
 
-//Whether spport nullable type, if you will never use the nullable type, you can remove this define `SUPPORT_NULLABLE` to make this `KissJSON.dll` smaller.
-//Chinese:是否支持可空类型,如果你将不会使用可空类型,你可以把这个`SUPPORT_NULLABLE`定义注释掉,可以使得`KissJSON.dll`更小一些.
+//Whether spport nullable type, if you will never use the nullable type, you can remove this define `SUPPORT_NULLABLE` to make this `KissJSON.dll` smaller, you also can set that define in project config.
+//Chinese:是否支持可空类型,如果你将不会使用可空类型,你可以把这个`SUPPORT_NULLABLE`定义注释掉,可以使得`KissJSON.dll`更小一些,你也可以在项目设置里设置该宏.
 #define SUPPORT_NULLABLE
 
 using System.Text;
@@ -74,6 +74,11 @@ namespace CSharpLike
             /// <br/><br/>Chinese:<br/>类型为双精度浮点数double
             /// </summary>
             DataTypeDouble,
+            /// <summary>
+            /// Value type is decimal
+            /// <br/><br/>Chinese:<br/>数据类型为十进制
+            /// </summary>
+            DataTypeDecimal,
 #if SUPPORT_NULLABLE
             /// <summary>
             /// Value type is nullable boolean
@@ -306,6 +311,7 @@ namespace CSharpLike
                     case DataType.DataTypeLong: return lValue;
                     case DataType.DataTypeULong: return ulValue;
                     case DataType.DataTypeDouble: return dValue;
+                    case DataType.DataTypeDecimal: return mValue;
 #if SUPPORT_NULLABLE
                     case DataType.DataTypeBooleanNullable: return bValueNullable;
                     case DataType.DataTypeIntNullable: return iValueNullable;
@@ -335,6 +341,7 @@ namespace CSharpLike
                     case DataType.DataTypeLong: return typeof(long);
                     case DataType.DataTypeULong: return typeof(ulong);
                     case DataType.DataTypeDouble: return typeof(double);
+                    case DataType.DataTypeDecimal: return typeof(decimal);
 #if SUPPORT_NULLABLE
                     case DataType.DataTypeBooleanNullable: return typeof(bool?);
                     case DataType.DataTypeIntNullable: return typeof(int?);
@@ -381,6 +388,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return sourceJsonData.lValue;
                 case DataType.DataTypeULong: return sourceJsonData.ulValue;
                 case DataType.DataTypeDouble: return sourceJsonData.dValue;
+                case DataType.DataTypeDecimal: return sourceJsonData.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeBooleanNullable: return sourceJsonData.bValueNullable;
                 case DataType.DataTypeIntNullable: return sourceJsonData.iValueNullable;
@@ -652,7 +660,7 @@ namespace CSharpLike
         /// </summary>
         public IEnumerator GetEnumerator()
         {
-            switch(dataType)
+            switch (dataType)
             {
                 case DataType.DataTypeList: return listValue.GetEnumerator();
                 case DataType.DataTypeDictionary: return dictValue.GetEnumerator();
@@ -669,6 +677,7 @@ namespace CSharpLike
         private long lValue;
         private ulong ulValue;
         private double dValue;
+        private decimal mValue;
 #if SUPPORT_NULLABLE
         private bool? bValueNullable;
         private int? iValueNullable;
@@ -743,6 +752,8 @@ namespace CSharpLike
                     return ulValue.ToString();
                 case DataType.DataTypeDouble:
                     return dValue.ToString(KissJson.CultureForConvertFloatAndDouble);
+                case DataType.DataTypeDecimal:
+                    return mValue.ToString(KissJson.CultureForConvertFloatAndDouble);
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeBooleanNullable:
                     return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
@@ -893,6 +904,8 @@ namespace CSharpLike
                         return ulValue.ToString();
                     case DataType.DataTypeDouble:
                         return dValue.ToString(KissJson.CultureForConvertFloatAndDouble);
+                    case DataType.DataTypeDecimal:
+                        return mValue.ToString(KissJson.CultureForConvertFloatAndDouble);
 #if SUPPORT_NULLABLE
                     case DataType.DataTypeBooleanNullable:
                         return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
@@ -993,6 +1006,8 @@ namespace CSharpLike
                         return ulValue.ToString();
                     case DataType.DataTypeDouble:
                         return dValue.ToString(KissJson.CultureForConvertFloatAndDouble);
+                    case DataType.DataTypeDecimal:
+                        return mValue.ToString(KissJson.CultureForConvertFloatAndDouble);
 #if SUPPORT_NULLABLE
                     case DataType.DataTypeBooleanNullable:
                         return bValueNullable == null ? "null" : (bValueNullable.Value ? "true" : "false");
@@ -1142,7 +1157,28 @@ namespace CSharpLike
         static bool IsInValidList(ref JSONData value)
         {
             if (value == null) return true;
-            if (value.dataType == DataType.DataTypeString) value = KissJson.ToJSONData(value.strValue);
+            if (value.dataType == DataType.DataTypeString && value.strValue != null)
+            {
+                //1 Normal JSON string format. e.g.`{"aa":1,"bb":2}`
+                JSONData value2 = KissJson.ToJSONData(value.strValue);
+                if (value2 == null)//We still return an empty JSONData with no item
+                {
+                    value.dataType = DataType.DataTypeList;
+                    value.listValue = new List<JSONData>();
+                    //2 Split by `|`. e.g. `1|2|3`
+                    //3 Split by `,`. e.g. `1,2,3`
+                    foreach (string item in value.strValue.Split(value.strValue.IndexOf('|') >= 0
+                        && value.strValue.IndexOf(',') < 0 ? '|' : ','))
+                        value.listValue.Add(item);
+                    return false;
+                }
+                else if (value2.dataType == DataType.DataTypeList)
+                {
+                    value.dataType = DataType.DataTypeList;
+                    value.listValue = value2.listValue;
+                    return false;
+                }
+            }
             return value == null || value.dataType != DataType.DataTypeList;
         }
         static JSONData FromList(IList value, Type type)
@@ -1447,7 +1483,41 @@ namespace CSharpLike
         static bool IsInValidDictionary(ref JSONData value)
         {
             if (value == null) return true;
-            if (value.dataType == DataType.DataTypeString) value = KissJson.ToJSONData(value.strValue);
+            if (value.dataType == DataType.DataTypeString && value.strValue != null)
+            {
+                //1 Normal JSON string format. e.g.`{"aa":1,"bb":2}`
+                JSONData value2 = KissJson.ToJSONData(value.strValue);
+                if (value2 == null)//We still return an empty JSONData with no item
+                {
+                    value.dataType = DataType.DataTypeDictionary;
+                    value.dictValue = new Dictionary<string, JSONData>();
+                    //2 Split by `|` and `_`. e.g. `aa_1|bb_2`
+                    if (value.strValue.IndexOf('|') >= 0 && value.strValue.IndexOf('_') >= 0)
+                    {
+                        foreach (string item in value.strValue.Split('|'))
+                        {
+                            string[] item2 = item.Split('_');
+                            if (item2.Length == 2)
+                                value.dictValue[item2[0]] = item2[1];
+                        }
+                    }
+                    //3 Split by `,`. e.g. `aa,1,bb,2`
+                    else if (value.strValue.IndexOf(',') >= 0)
+                    {
+                        string[] item = value.strValue.Split(',');
+                        int count = item.Length - 1;
+                        for (int i = 0; i < count; i += 2)
+                            value.dictValue[item[i]] = item[i + 1];
+                    }
+                    return false;
+                }
+                else if (value2.dataType == DataType.DataTypeDictionary)
+                {
+                    value.dataType = DataType.DataTypeDictionary;
+                    value.dictValue = value2.dictValue;
+                    return false;
+                }
+            }
             return value == null || value.dataType != DataType.DataTypeDictionary;
         }
         static JSONData FromDictionary(IDictionary value, Type type)
@@ -1468,7 +1538,7 @@ namespace CSharpLike
         {
             if (!mTypeDictionarys.TryGetValue(type, out ConstructorInfo ci))
             {
-                Type t = typeof(Dictionary<,>).MakeGenericType(typeof(string),type);
+                Type t = typeof(Dictionary<,>).MakeGenericType(typeof(string), type);
                 ci = t.GetConstructor(Type.EmptyTypes);
                 mTypeDictionarys[type] = ci;
             }
@@ -1786,6 +1856,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (byte)value.lValue;
                 case DataType.DataTypeULong: return (byte)value.ulValue;
                 case DataType.DataTypeDouble: return (byte)value.dValue;
+                case DataType.DataTypeDecimal: return (byte)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (byte)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (byte)value.lValueNullable;
@@ -1832,6 +1903,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (byte?)value.lValue;
                 case DataType.DataTypeULong: return (byte?)value.ulValue;
                 case DataType.DataTypeDouble: return (byte?)value.dValue;
+                case DataType.DataTypeDecimal: return (byte?)value.mValue;
                 case DataType.DataTypeIntNullable: return (byte?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (byte?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (byte?)value.ulValueNullable;
@@ -1882,6 +1954,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (sbyte)value.lValue;
                 case DataType.DataTypeULong: return (sbyte)value.ulValue;
                 case DataType.DataTypeDouble: return (sbyte)value.dValue;
+                case DataType.DataTypeDecimal: return (sbyte)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (sbyte)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (sbyte)value.lValueNullable;
@@ -1923,6 +1996,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (sbyte?)value.lValue;
                 case DataType.DataTypeULong: return (sbyte?)value.ulValue;
                 case DataType.DataTypeDouble: return (sbyte?)value.dValue;
+                case DataType.DataTypeDecimal: return (sbyte?)value.mValue;
                 case DataType.DataTypeIntNullable: return (sbyte?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (sbyte?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (sbyte?)value.ulValueNullable;
@@ -1978,6 +2052,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (short)value.lValue;
                 case DataType.DataTypeULong: return (short)value.ulValue;
                 case DataType.DataTypeDouble: return (short)value.dValue;
+                case DataType.DataTypeDecimal: return (short)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (short)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (short)value.lValueNullable;
@@ -2026,6 +2101,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (ushort)value.lValue;
                 case DataType.DataTypeULong: return (ushort)value.ulValue;
                 case DataType.DataTypeDouble: return (ushort)value.dValue;
+                case DataType.DataTypeDecimal: return (ushort)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (ushort)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (ushort)value.lValueNullable;
@@ -2134,8 +2210,8 @@ namespace CSharpLike
         public static implicit operator JSONData(Enum value)
         {
             if (value == null)
-                return new JSONData() { dataType = DataType.DataTypeInt, iValue  = 0 };
-            switch(value.GetType().GetEnumUnderlyingType().Name)
+                return new JSONData() { dataType = DataType.DataTypeInt, iValue = 0 };
+            switch (value.GetType().GetEnumUnderlyingType().Name)
             {
                 case "Byte":
                 case "SByte":
@@ -2170,6 +2246,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (int)value.lValue;
                 case DataType.DataTypeULong: return (int)value.ulValue;
                 case DataType.DataTypeDouble: return (int)value.dValue;
+                case DataType.DataTypeDecimal: return (int)value.mValue;
                 case DataType.DataTypeBoolean: return value.bValue ? 1 : 0;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (int)value.iValueNullable;
@@ -2199,6 +2276,617 @@ namespace CSharpLike
             return default;
         }
         /// <summary>
+        /// Override operator +
+        /// <br/><br/>Chinese:<br/>重载+运算符
+        /// </summary>
+        public static string operator +(JSONData a, string b) => a.ToJson() + b;
+        /// <summary>
+        /// Override operator +
+        /// <br/><br/>Chinese:<br/>重载+运算符
+        /// </summary>
+        public static string operator +(string a, JSONData b) => a + b.ToJson();
+        /// <summary>
+        /// Override operator +
+        /// <br/><br/>Chinese:<br/>重载+运算符
+        /// </summary>
+        public static JSONData operator +(JSONData a, JSONData b)
+        {
+            JSONData ret = new JSONData();
+            if (a.dataType == b.dataType)
+            {
+                ret.dataType = a.dataType;
+                switch(ret.dataType)
+                {
+                    case DataType.DataTypeInt: ret.iValue = a.iValue + b.iValue; break;
+                    case DataType.DataTypeLong: ret.lValue = a.lValue + b.lValue; break;
+                    case DataType.DataTypeULong: ret.ulValue = a.ulValue + b.ulValue; break;
+                    case DataType.DataTypeDouble: ret.dValue = a.dValue + b.dValue; break;
+                    case DataType.DataTypeDecimal: ret.mValue = a.mValue + b.mValue; break;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: ret.iValueNullable = a.iValueNullable + b.iValueNullable; break;
+                    case DataType.DataTypeLongNullable: ret.lValueNullable = a.lValueNullable + b.lValueNullable; break;
+                    case DataType.DataTypeULongNullable: ret.ulValueNullable = a.ulValueNullable + b.ulValueNullable; break;
+                    case DataType.DataTypeDoubleNullable: ret.dValueNullable = a.dValueNullable + b.dValueNullable; break;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: ret.strValue = a.strValue + b.strValue; break;
+                    case DataType.DataTypeList:
+                        ret.listValue = new List<JSONData>();
+                        foreach (JSONData one in a)
+                            ret.listValue.Add(one);
+                        foreach (JSONData one in b)
+                            ret.listValue.Add(one);
+                        break;
+                    case DataType.DataTypeDictionary:
+                        ret.dictValue = new Dictionary<string, JSONData>();
+                        foreach (var one in a.dictValue)
+                            ret.dictValue[one.Key] = one.Value;
+                        foreach (var one in b.dictValue)
+                            ret.dictValue[one.Key] = one.Value;
+                        break;
+                    default:
+                        if (ThrowException) throw new Exception($"operator + error: `{a.ToJson()}` + `{b.ToJson()}`");
+                        ret.dataType = DataType.DataTypeNull;
+                        break;
+                }
+            }
+            else
+            {
+                if (a.dataType == DataType.DataTypeString)
+                {
+                    ret.dataType = DataType.DataTypeString;
+                    ret.strValue = a.strValue + b.ToJson();
+                }
+                else if (b.dataType == DataType.DataTypeString)
+                {
+                    ret.dataType = DataType.DataTypeString;
+                    ret.strValue = a.ToJson() + b.strValue;
+                }
+                else
+                {
+                    switch (GetDecimalType(a.ValueType, b.ValueType))
+                    {
+                        case T_Long:
+                        case T_UInt: ret.dataType = DataType.DataTypeLong; ret.lValue = Convert.ToInt64((decimal)a + (decimal)b); break;
+                        case T_Double:
+                        case T_Float: ret.dataType = DataType.DataTypeDouble; ret.dValue = Convert.ToDouble((decimal)a + (decimal)b); break;
+                        case T_ULong: ret.dataType = DataType.DataTypeULong; ret.ulValue = Convert.ToUInt64((decimal)a + (decimal)b); break;
+                        case T_Decimal: ret.dataType = DataType.DataTypeDecimal; ret.mValue = (decimal)a + (decimal)b; break;
+                        default: ret.dataType = DataType.DataTypeInt; ret.iValue = Convert.ToInt32((decimal)a + (decimal)b); break;
+                    }
+                }
+            }
+            return ret;
+        }
+        /// <summary>
+        /// Override operator -
+        /// <br/><br/>Chinese:<br/>重载-运算符
+        /// </summary>
+        public static JSONData operator -(JSONData a, JSONData b)
+        {
+            JSONData ret = new JSONData();
+            if (a.dataType == b.dataType)
+            {
+                ret.dataType = a.dataType;
+                switch (ret.dataType)
+                {
+                    case DataType.DataTypeInt: ret.iValue = a.iValue - b.iValue; break;
+                    case DataType.DataTypeLong: ret.lValue = a.lValue - b.lValue; break;
+                    case DataType.DataTypeULong: ret.ulValue = a.ulValue - b.ulValue; break;
+                    case DataType.DataTypeDouble: ret.dValue = a.dValue - b.dValue; break;
+                    case DataType.DataTypeDecimal: ret.mValue = a.mValue - b.mValue; break;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: ret.iValueNullable = a.iValueNullable - b.iValueNullable; break;
+                    case DataType.DataTypeLongNullable: ret.lValueNullable = a.lValueNullable - b.lValueNullable; break;
+                    case DataType.DataTypeULongNullable: ret.ulValueNullable = a.ulValueNullable - b.ulValueNullable; break;
+                    case DataType.DataTypeDoubleNullable: ret.dValueNullable = a.dValueNullable - b.dValueNullable; break;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: ret.strValue = ((decimal)a - (decimal)b).ToString(KissJson.CultureForConvertFloatAndDouble); break;
+                    default:
+                        if (ThrowException) throw new Exception($"operator - error: `{a.ToJson()}` - `{b.ToJson()}`");
+                        ret.dataType = DataType.DataTypeNull;
+                        break;
+                }
+            }
+            else
+            {
+                switch (GetDecimalType(a.ValueType, b.ValueType))
+                {
+                    case T_Long:
+                    case T_UInt: ret.dataType = DataType.DataTypeLong; ret.lValue = Convert.ToInt64((decimal)a - (decimal)b); break;
+                    case T_Double:
+                    case T_Float: ret.dataType = DataType.DataTypeDouble; ret.dValue = Convert.ToDouble((decimal)a - (decimal)b); break;
+                    case T_ULong: ret.dataType = DataType.DataTypeULong; ret.ulValue = Convert.ToUInt64((decimal)a - (decimal)b); break;
+                    case T_Decimal: ret.dataType = DataType.DataTypeDecimal; ret.mValue = (decimal)a - (decimal)b; break;
+                    default: ret.dataType = DataType.DataTypeInt; ret.iValue = Convert.ToInt32((decimal)a - (decimal)b); break;
+                }
+            }
+            return ret;
+        }
+        /// <summary>
+        /// Override operator *
+        /// <br/><br/>Chinese:<br/>重载*运算符
+        /// </summary>
+        public static JSONData operator *(JSONData a, JSONData b)
+        {
+            JSONData ret = new JSONData();
+            if (a.dataType == b.dataType)
+            {
+                ret.dataType = a.dataType;
+                switch (ret.dataType)
+                {
+                    case DataType.DataTypeInt: ret.iValue = a.iValue * b.iValue; break;
+                    case DataType.DataTypeLong: ret.lValue = a.lValue * b.lValue; break;
+                    case DataType.DataTypeULong: ret.ulValue = a.ulValue * b.ulValue; break;
+                    case DataType.DataTypeDouble: ret.dValue = a.dValue * b.dValue; break;
+                    case DataType.DataTypeDecimal: ret.mValue = a.mValue * b.mValue; break;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: ret.iValueNullable = a.iValueNullable * b.iValueNullable; break;
+                    case DataType.DataTypeLongNullable: ret.lValueNullable = a.lValueNullable * b.lValueNullable; break;
+                    case DataType.DataTypeULongNullable: ret.ulValueNullable = a.ulValueNullable * b.ulValueNullable; break;
+                    case DataType.DataTypeDoubleNullable: ret.dValueNullable = a.dValueNullable * b.dValueNullable; break;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: ret.strValue = ((decimal)a * (decimal)b).ToString(KissJson.CultureForConvertFloatAndDouble); break;
+                    default:
+                        if (ThrowException) throw new Exception($"operator * error: `{a.ToJson()}` * `{b.ToJson()}`");
+                        ret.dataType = DataType.DataTypeNull;
+                        break;
+                }
+            }
+            else
+            {
+                switch (GetDecimalType(a.ValueType, b.ValueType))
+                {
+                    case T_Long:
+                    case T_UInt: ret.dataType = DataType.DataTypeLong; ret.lValue = Convert.ToInt64((decimal)a * (decimal)b); break;
+                    case T_Double:
+                    case T_Float: ret.dataType = DataType.DataTypeDouble; ret.dValue = Convert.ToDouble((decimal)a * (decimal)b); break;
+                    case T_ULong: ret.dataType = DataType.DataTypeULong; ret.ulValue = Convert.ToUInt64((decimal)a * (decimal)b); break;
+                    case T_Decimal: ret.dataType = DataType.DataTypeDecimal; ret.mValue = (decimal)a * (decimal)b; break;
+                    default: ret.dataType = DataType.DataTypeInt; ret.iValue = Convert.ToInt32((decimal)a * (decimal)b); break;
+                }
+            }
+            return ret;
+        }
+        /// <summary>
+        /// Override operator /
+        /// <br/><br/>Chinese:<br/>重载/运算符
+        /// </summary>
+        public static JSONData operator /(JSONData a, JSONData b)
+        {
+            JSONData ret = new JSONData();
+            if (a.dataType == b.dataType)
+            {
+                ret.dataType = a.dataType;
+                switch (ret.dataType)
+                {
+                    case DataType.DataTypeInt: ret.iValue = a.iValue / b.iValue; break;
+                    case DataType.DataTypeLong: ret.lValue = a.lValue / b.lValue; break;
+                    case DataType.DataTypeULong: ret.ulValue = a.ulValue / b.ulValue; break;
+                    case DataType.DataTypeDouble: ret.dValue = a.dValue / b.dValue; break;
+                    case DataType.DataTypeDecimal: ret.mValue = a.mValue / b.mValue; break;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: ret.iValueNullable = a.iValueNullable / b.iValueNullable; break;
+                    case DataType.DataTypeLongNullable: ret.lValueNullable = a.lValueNullable / b.lValueNullable; break;
+                    case DataType.DataTypeULongNullable: ret.ulValueNullable = a.ulValueNullable / b.ulValueNullable; break;
+                    case DataType.DataTypeDoubleNullable: ret.dValueNullable = a.dValueNullable / b.dValueNullable; break;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: ret.strValue = ((decimal)a / (decimal)b).ToString(KissJson.CultureForConvertFloatAndDouble); break;
+                    default:
+                        if (ThrowException) throw new Exception($"operator / error: `{a.ToJson()}` / `{b.ToJson()}`");
+                        ret.dataType = DataType.DataTypeNull;
+                        break;
+                }
+            }
+            else
+            {
+                switch (GetDecimalType(a.ValueType, b.ValueType))
+                {
+                    case T_Long:
+                    case T_UInt: ret.dataType = DataType.DataTypeLong; ret.lValue = Convert.ToInt64((decimal)a / (decimal)b); break;
+                    case T_Double:
+                    case T_Float: ret.dataType = DataType.DataTypeDouble; ret.dValue = Convert.ToDouble((decimal)a / (decimal)b); break;
+                    case T_ULong: ret.dataType = DataType.DataTypeULong; ret.ulValue = Convert.ToUInt64((decimal)a / (decimal)b); break;
+                    case T_Decimal: ret.dataType = DataType.DataTypeDecimal; ret.mValue = (decimal)a / (decimal)b; break;
+                    default: ret.dataType = DataType.DataTypeInt; ret.iValue = Convert.ToInt32((decimal)a / (decimal)b); break;
+                }
+            }
+            return ret;
+        }
+        /// <summary>
+        /// Override operator &amp;
+        /// <br/><br/>Chinese:<br/>重载&amp;运算符
+        /// </summary>
+        public static JSONData operator &(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue & b.iValue;
+                    case DataType.DataTypeLong: return a.lValue & b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue & b.ulValue;
+                    case DataType.DataTypeBoolean: return a.bValue & b.bValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable & b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable & b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable & b.ulValueNullable;
+                    case DataType.DataTypeBooleanNullable: return a.bValueNullable & b.bValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: return Convert.ToInt32(a.strValue) & Convert.ToInt32(b.strValue);
+                    default:
+                        break;
+                }
+            }
+            if (a.dataType == DataType.DataTypeULong) return a.ulValue & (ulong)b;
+            if (b.dataType == DataType.DataTypeULong) return b.ulValue & (ulong)a;
+            if (a.dataType == DataType.DataTypeLong) return a.lValue & (long)b;
+            if (b.dataType == DataType.DataTypeLong) return b.lValue & (long)a;
+            if (a.dataType == DataType.DataTypeInt) return a.iValue & (int)b;
+            if (b.dataType == DataType.DataTypeInt) return b.iValue & (int)a;
+            return (int)a & (int)b;
+        }
+        /// <summary>
+        /// Override operator |
+        /// <br/><br/>Chinese:<br/>重载|运算符
+        /// </summary>
+        public static JSONData operator |(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue | b.iValue;
+                    case DataType.DataTypeLong: return a.lValue | b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue | b.ulValue;
+                    case DataType.DataTypeBoolean: return a.bValue | b.bValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable | b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable | b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable | b.ulValueNullable;
+                    case DataType.DataTypeBooleanNullable: return a.bValueNullable | b.bValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: return Convert.ToInt32(a.strValue) | Convert.ToInt32(b.strValue);
+                    default:
+                        break;
+                }
+            }
+            if (a.dataType == DataType.DataTypeULong) return a.ulValue | (ulong)b;
+            if (b.dataType == DataType.DataTypeULong) return b.ulValue | (ulong)a;
+            if (a.dataType == DataType.DataTypeLong) return a.lValue | (long)b;
+            if (b.dataType == DataType.DataTypeLong) return b.lValue | (long)a;
+            if (a.dataType == DataType.DataTypeInt) return a.iValue | (int)b;
+            if (b.dataType == DataType.DataTypeInt) return b.iValue | (int)a;
+            return (int)a | (int)b;
+        }
+        /// <summary>
+        /// Override operator ^
+        /// <br/><br/>Chinese:<br/>重载^运算符
+        /// </summary>
+        public static JSONData operator ^(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue ^ b.iValue;
+                    case DataType.DataTypeLong: return a.lValue ^ b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue ^ b.ulValue;
+                    case DataType.DataTypeBoolean: return a.bValue ^ b.bValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable ^ b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable ^ b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable ^ b.ulValueNullable;
+                    case DataType.DataTypeBooleanNullable: return a.bValueNullable ^ b.bValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: return Convert.ToInt32(a.strValue) ^ Convert.ToInt32(b.strValue);
+                    default:
+                        break;
+                }
+            }
+            if (a.dataType == DataType.DataTypeULong) return a.ulValue ^ (ulong)b;
+            if (b.dataType == DataType.DataTypeULong) return b.ulValue ^ (ulong)a;
+            if (a.dataType == DataType.DataTypeLong) return a.lValue ^ (long)b;
+            if (b.dataType == DataType.DataTypeLong) return b.lValue ^ (long)a;
+            if (a.dataType == DataType.DataTypeInt) return a.iValue ^ (int)b;
+            if (b.dataType == DataType.DataTypeInt) return b.iValue ^ (int)a;
+            return (int)a ^ (int)b;
+        }
+        /// <summary>
+        /// Override operator &lt;&lt;
+        /// <br/><br/>Chinese:<br/>重载&lt;&lt;运算符
+        /// </summary>
+        public static JSONData operator <<(JSONData a, int b)
+        {
+            switch (a.dataType)
+            {
+                case DataType.DataTypeInt: return a.iValue << b;
+                case DataType.DataTypeLong: return a.lValue << b;
+                case DataType.DataTypeULong: return a.ulValue << b;
+#if SUPPORT_NULLABLE
+                case DataType.DataTypeIntNullable: return a.iValueNullable << b;
+                case DataType.DataTypeLongNullable: return a.lValueNullable << b;
+                case DataType.DataTypeULongNullable: return a.ulValueNullable << b;
+#endif //SUPPORT_NULLABLE
+                case DataType.DataTypeString: return Convert.ToInt32(a.strValue) << b;
+                default: return (int)a << b;
+            }
+        }
+        /// <summary>
+        /// Override operator &gt;&gt;
+        /// <br/><br/>Chinese:<br/>重载&gt;&gt;运算符
+        /// </summary>
+        public static JSONData operator >>(JSONData a, int b)
+        {
+            switch (a.dataType)
+            {
+                case DataType.DataTypeInt: return a.iValue >> b;
+                case DataType.DataTypeLong: return a.lValue >> b;
+                case DataType.DataTypeULong: return a.ulValue >> b;
+#if SUPPORT_NULLABLE
+                case DataType.DataTypeIntNullable: return a.iValueNullable >> b;
+                case DataType.DataTypeLongNullable: return a.lValueNullable >> b;
+                case DataType.DataTypeULongNullable: return a.ulValueNullable >> b;
+#endif //SUPPORT_NULLABLE
+                case DataType.DataTypeString: return Convert.ToInt32(a.strValue) >> b;
+                default: return (int)a >> b;
+            }
+        }
+        /// <summary>
+        /// Override operator ~
+        /// <br/><br/>Chinese:<br/>重载~运算符
+        /// </summary>
+        public static JSONData operator ~(JSONData a)
+        {
+            switch (a.dataType)
+            {
+                case DataType.DataTypeInt: return ~a.iValue;
+                case DataType.DataTypeLong: return ~a.lValue;
+                case DataType.DataTypeULong: return ~a.ulValue;
+#if SUPPORT_NULLABLE
+                case DataType.DataTypeIntNullable: return ~a.iValueNullable;
+                case DataType.DataTypeLongNullable: return ~a.lValueNullable;
+                case DataType.DataTypeULongNullable: return ~a.ulValueNullable;
+#endif //SUPPORT_NULLABLE
+                case DataType.DataTypeString: return ~Convert.ToInt32(a.strValue);
+                default: return ~(int)a;
+            }
+        }
+        /// <summary>
+        /// Override operator %
+        /// <br/><br/>Chinese:<br/>重载%运算符
+        /// </summary>
+        public static JSONData operator %(JSONData a, JSONData b)
+        {
+            JSONData ret = new JSONData();
+            if (a.dataType == b.dataType)
+            {
+                ret.dataType = a.dataType;
+                switch (ret.dataType)
+                {
+                    case DataType.DataTypeInt: ret.iValue = a.iValue % b.iValue; break;
+                    case DataType.DataTypeLong: ret.lValue = a.lValue % b.lValue; break;
+                    case DataType.DataTypeULong: ret.ulValue = a.ulValue % b.ulValue; break;
+                    case DataType.DataTypeDouble: ret.dValue = a.dValue % b.dValue; break;
+                    case DataType.DataTypeDecimal: ret.mValue = a.mValue % b.mValue; break;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: ret.iValueNullable = a.iValueNullable % b.iValueNullable; break;
+                    case DataType.DataTypeLongNullable: ret.lValueNullable = a.lValueNullable % b.lValueNullable; break;
+                    case DataType.DataTypeULongNullable: ret.ulValueNullable = a.ulValueNullable % b.ulValueNullable; break;
+                    case DataType.DataTypeDoubleNullable: ret.dValueNullable = a.dValueNullable % b.dValueNullable; break;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: ret.strValue = ((decimal)a % (decimal)b).ToString(KissJson.CultureForConvertFloatAndDouble); break;
+                    default:
+                        if (ThrowException) throw new Exception($"operator % error: `{a.ToJson()}` % `{b.ToJson()}`");
+                        ret.dataType = DataType.DataTypeNull;
+                        break;
+                }
+            }
+            else
+            {
+                switch (GetDecimalType(a.ValueType, b.ValueType))
+                {
+                    case T_Long:
+                    case T_UInt: ret.dataType = DataType.DataTypeLong; ret.lValue = Convert.ToInt64((decimal)a % (decimal)b); break;
+                    case T_Double:
+                    case T_Float: ret.dataType = DataType.DataTypeDouble; ret.dValue = Convert.ToDouble((decimal)a % (decimal)b); break;
+                    case T_ULong: ret.dataType = DataType.DataTypeULong; ret.ulValue = Convert.ToUInt64((decimal)a % (decimal)b); break;
+                    case T_Decimal: ret.dataType = DataType.DataTypeDecimal; ret.mValue = (decimal)a % (decimal)b; break;
+                    default: ret.dataType = DataType.DataTypeInt; ret.iValue = Convert.ToInt32((decimal)a % (decimal)b); break;
+                }
+            }
+            return ret;
+        }
+        /// <summary>
+        /// Override operator >
+        /// <br/><br/>Chinese:<br/>重载>运算符
+        /// </summary>
+        public static bool operator >(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue > b.iValue;
+                    case DataType.DataTypeLong: return a.lValue > b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue > b.ulValue;
+                    case DataType.DataTypeDouble: return a.dValue > b.dValue;
+                    case DataType.DataTypeDecimal: return a.mValue > b.mValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable > b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable > b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable > b.ulValueNullable;
+                    case DataType.DataTypeDoubleNullable: return a.dValueNullable > b.dValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString: return Convert.ToDecimal(a.strValue, KissJson.CultureForConvertFloatAndDouble)
+                            > Convert.ToDecimal(b.strValue, KissJson.CultureForConvertFloatAndDouble);
+                    default:
+                        break;
+                }
+            }
+            return (decimal)a > (decimal)b;
+        }
+        /// <summary>
+        /// Override operator &lt;
+        /// <br/><br/>Chinese:<br/>重载&lt;运算符
+        /// </summary>
+        public static bool operator <(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue < b.iValue;
+                    case DataType.DataTypeLong: return a.lValue < b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue < b.ulValue;
+                    case DataType.DataTypeDouble: return a.dValue < b.dValue;
+                    case DataType.DataTypeDecimal: return a.mValue < b.mValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable < b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable < b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable < b.ulValueNullable;
+                    case DataType.DataTypeDoubleNullable: return a.dValueNullable < b.dValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString:
+                        return Convert.ToDecimal(a.strValue, KissJson.CultureForConvertFloatAndDouble)
+  < Convert.ToDecimal(b.strValue, KissJson.CultureForConvertFloatAndDouble);
+                    default:
+                        break;
+                }
+            }
+            return (decimal)a < (decimal)b;
+        }
+        /// <summary>
+        /// Override operator >=
+        /// <br/><br/>Chinese:<br/>重载>=运算符
+        /// </summary>
+        public static bool operator >=(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue >= b.iValue;
+                    case DataType.DataTypeLong: return a.lValue >= b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue >= b.ulValue;
+                    case DataType.DataTypeDouble: return a.dValue >= b.dValue;
+                    case DataType.DataTypeDecimal: return a.mValue >= b.mValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable >= b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable >= b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable >= b.ulValueNullable;
+                    case DataType.DataTypeDoubleNullable: return a.dValueNullable >= b.dValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString:
+                        return Convert.ToDecimal(a.strValue, KissJson.CultureForConvertFloatAndDouble)
+  >= Convert.ToDecimal(b.strValue, KissJson.CultureForConvertFloatAndDouble);
+                    default:
+                        break;
+                }
+            }
+            return (decimal)a >= (decimal)b;
+        }
+        /// <summary>
+        /// Override operator &lt;=
+        /// <br/><br/>Chinese:<br/>重载&lt;=运算符
+        /// </summary>
+        public static bool operator <=(JSONData a, JSONData b)
+        {
+            if (a.dataType == b.dataType)
+            {
+                switch (a.dataType)
+                {
+                    case DataType.DataTypeInt: return a.iValue <= b.iValue;
+                    case DataType.DataTypeLong: return a.lValue <= b.lValue;
+                    case DataType.DataTypeULong: return a.ulValue <= b.ulValue;
+                    case DataType.DataTypeDouble: return a.dValue <= b.dValue;
+                    case DataType.DataTypeDecimal: return a.mValue <= b.mValue;
+#if SUPPORT_NULLABLE
+                    case DataType.DataTypeIntNullable: return a.iValueNullable <= b.iValueNullable;
+                    case DataType.DataTypeLongNullable: return a.lValueNullable <= b.lValueNullable;
+                    case DataType.DataTypeULongNullable: return a.ulValueNullable <= b.ulValueNullable;
+                    case DataType.DataTypeDoubleNullable: return a.dValueNullable <= b.dValueNullable;
+#endif //SUPPORT_NULLABLE
+                    case DataType.DataTypeString:
+                        return Convert.ToDecimal(a.strValue, KissJson.CultureForConvertFloatAndDouble)
+  <= Convert.ToDecimal(b.strValue, KissJson.CultureForConvertFloatAndDouble);
+                    default:
+                        break;
+                }
+            }
+            return (decimal)a <= (decimal)b;
+        }
+        /// <summary>
+        /// Override Equals
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj is JSONData data) return ToJson() == data.ToJson();
+            MethodInfo mi = GetImplicitFrom(obj.GetType());
+            if (mi == null) return false;
+            object obj2 = mi.Invoke(null, new object[1] { obj });
+            if (obj2 == null) return false;
+            data = obj2 as JSONData;
+            return ToJson() == data.ToJson();
+        }
+        /// <summary>
+        /// Override GetHashCode
+        /// </summary>
+        public override int GetHashCode() => ToJson().GetHashCode();
+        /// <summary>
+        /// Override operator ==
+        /// <br/><br/>Chinese:<br/>重载==运算符
+        /// </summary>
+        public static bool operator ==(JSONData a, JSONData b) => a?.ToJson() == b?.ToJson();
+        /// <summary>
+        /// Override operator !=
+        /// <br/><br/>Chinese:<br/>重载!=运算符
+        /// </summary>
+        public static bool operator !=(JSONData a, JSONData b) => a?.ToJson() != b?.ToJson();
+        static int GetDecimalType(Type a, Type b)
+        {
+            int aIndex = _TypeList.IndexOf(a);
+            int bIndex = _TypeList.IndexOf(b);
+
+            //0. decimal
+            if (aIndex == T_Decimal || bIndex == T_Decimal) return T_Decimal;
+            //1. double and float
+            if (aIndex == T_Double || bIndex == T_Double) return T_Double;
+            if (aIndex == T_Float || bIndex == T_Float) return T_Float;
+            //2. ulong
+            if (aIndex == T_ULong || bIndex == T_ULong) return T_ULong;
+            //3. long
+            if (aIndex == T_Long || bIndex == T_Long) return T_Long;
+            //4. int and uint are long.
+            if ((aIndex == T_Int && bIndex == T_UInt) || (aIndex == T_UInt && bIndex == T_Int)) return T_Long;
+            //5. uint and none int are uint.
+            if ((aIndex == T_UInt && bIndex != T_Int) || (bIndex == T_UInt && aIndex != T_Int)) return T_UInt;
+            //6 int
+            return T_Int;
+        }
+        static List<Type> _TypeList = new List<Type>(new Type[]{
+                        typeof(decimal),
+                        typeof(double),
+                        typeof(float),
+                        typeof(long),
+                        typeof(ulong),
+                        typeof(int),
+                        typeof(uint),
+                        typeof(short),
+                        typeof(ushort),
+                        typeof(sbyte),
+                        typeof(byte),
+                        typeof(char)
+                    });
+        private const int T_Decimal = 0;
+        private const int T_Double = 1;
+        private const int T_Float = 2;
+        private const int T_Long = 3;
+        private const int T_ULong = 4;
+        private const int T_Int = 5;
+        private const int T_UInt = 6;
+
+        /// <summary>
         /// Implicit convert from uint to JSONData
         /// <br/><br/>Chinese:<br/>把uint隐式转换JSON对象
         /// </summary>
@@ -2220,6 +2908,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (uint)value.lValue;
                 case DataType.DataTypeULong: return (uint)value.ulValue;
                 case DataType.DataTypeDouble: return (uint)value.dValue;
+                case DataType.DataTypeDecimal: return (uint)value.mValue;
                 case DataType.DataTypeBoolean: return value.bValue ? 1u : 0u;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (uint)value.iValueNullable;
@@ -2270,6 +2959,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return (long)value.ulValue;
                 case DataType.DataTypeDouble: return (long)value.dValue;
+                case DataType.DataTypeDecimal: return (long)value.mValue;
                 case DataType.DataTypeBoolean: return value.bValue ? 1L : 0L;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (long)value.iValueNullable;
@@ -2321,6 +3011,7 @@ namespace CSharpLike
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return (ulong)value.dValue;
                 case DataType.DataTypeBoolean: return value.bValue ? 1UL : 0UL;
+                case DataType.DataTypeDecimal: return (ulong)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (ulong)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (ulong)value.lValueNullable;
@@ -2349,6 +3040,57 @@ namespace CSharpLike
             return default;
         }
         /// <summary>
+        /// Implicit convert from decimal to JSONData, it'll store as double, so the value may be trimed
+        /// <br/><br/>Chinese:<br/>把decimal隐式转换JSON对象
+        /// </summary>
+        public static implicit operator JSONData(decimal value) => new JSONData() { dataType = DataType.DataTypeLong, dValue = (double)value };
+        /// <summary>
+        /// Implicit convert from JSONData to decimal
+        /// <br/><br/>Chinese:<br/>把JSON对象隐式转换decimal
+        /// </summary>
+        public static implicit operator decimal(JSONData value)
+        {
+            if (value == null)
+            {
+                if (ThrowException) throw new Exception("JSONData null, can't convert to decimal");
+                return default;
+            }
+            switch (value.dataType)
+            {
+                case DataType.DataTypeInt: return value.iValue;
+                case DataType.DataTypeLong: return value.lValue;
+                case DataType.DataTypeULong: return value.ulValue;
+                case DataType.DataTypeDouble: return (decimal)value.dValue;
+                case DataType.DataTypeBoolean: return value.bValue ? 1M : 0M;
+                case DataType.DataTypeDecimal: return value.mValue;
+#if SUPPORT_NULLABLE
+                case DataType.DataTypeIntNullable: return (decimal)value.iValueNullable;
+                case DataType.DataTypeLongNullable: return (decimal)value.lValueNullable;
+                case DataType.DataTypeULongNullable: return (decimal)value.ulValueNullable;
+                case DataType.DataTypeDoubleNullable: return (decimal)value.dValueNullable;
+                case DataType.DataTypeBooleanNullable: return value.bValueNullable.Value ? 1M : 0M;
+#endif //SUPPORT_NULLABLE
+                case DataType.DataTypeString:
+                    {
+                        if (ThrowException)
+                            return Convert.ToDecimal(value.strValue, KissJson.CultureForConvertFloatAndDouble);
+                        else
+                        {
+                            try
+                            {
+                                return Convert.ToDecimal(value.strValue, KissJson.CultureForConvertFloatAndDouble);
+                            }
+                            catch
+                            {
+                                return default;
+                            }
+                        }
+                    }
+            }
+            if (ThrowException) throw new Exception(value.ToString() + " can't convert to decimal");
+            return default;
+        }
+        /// <summary>
         /// Implicit convert from double to JSONData
         /// <br/><br/>Chinese:<br/>把double隐式转换JSON对象
         /// </summary>
@@ -2370,6 +3112,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return value.dValue;
+                case DataType.DataTypeDecimal: return (double)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (double)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (double)value.lValueNullable;
@@ -2418,6 +3161,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return (float)value.dValue;
+                case DataType.DataTypeDecimal: return (float)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (float)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (float)value.lValueNullable;
@@ -2466,6 +3210,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (char)value.lValue;
                 case DataType.DataTypeULong: return (char)value.ulValue;
                 case DataType.DataTypeDouble: return (char)value.dValue;
+                case DataType.DataTypeDecimal: return (char)value.mValue;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return (char)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (char)value.lValueNullable;
@@ -2512,6 +3257,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue.ToString();
                 case DataType.DataTypeULong: return value.ulValue.ToString();
                 case DataType.DataTypeDouble: return value.dValue.ToString(KissJson.CultureForConvertFloatAndDouble);
+                case DataType.DataTypeDecimal: return value.mValue.ToString(KissJson.CultureForConvertFloatAndDouble);
                 case DataType.DataTypeBoolean: return value.bValue.ToString();
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeIntNullable: return value.iValueNullable == null ? "null" : value.iValueNullable.Value.ToString();
@@ -2543,6 +3289,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (short?)value.lValue;
                 case DataType.DataTypeULong: return (short?)value.ulValue;
                 case DataType.DataTypeDouble: return (short?)value.dValue;
+                case DataType.DataTypeDecimal: return (short?)value.mValue;
                 case DataType.DataTypeIntNullable: return (short?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (short?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (short?)value.ulValueNullable;
@@ -2589,6 +3336,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (ushort?)value.lValue;
                 case DataType.DataTypeULong: return (ushort?)value.ulValue;
                 case DataType.DataTypeDouble: return (ushort?)value.dValue;
+                case DataType.DataTypeDecimal: return (ushort?)value.mValue;
                 case DataType.DataTypeIntNullable: return (ushort?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (ushort?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (ushort?)value.ulValueNullable;
@@ -2635,6 +3383,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (int?)value.lValue;
                 case DataType.DataTypeULong: return (int?)value.ulValue;
                 case DataType.DataTypeDouble: return (int?)value.dValue;
+                case DataType.DataTypeDecimal: return (int?)value.mValue;
                 case DataType.DataTypeIntNullable: return value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (int?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (int?)value.ulValueNullable;
@@ -2681,6 +3430,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (uint?)value.lValue;
                 case DataType.DataTypeULong: return (uint?)value.ulValue;
                 case DataType.DataTypeDouble: return (uint?)value.dValue;
+                case DataType.DataTypeDecimal: return (uint?)value.mValue;
                 case DataType.DataTypeIntNullable: return (uint?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (uint?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (uint?)value.ulValueNullable;
@@ -2727,6 +3477,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return (long?)value.ulValue;
                 case DataType.DataTypeDouble: return (long?)value.dValue;
+                case DataType.DataTypeDecimal: return (long?)value.mValue;
                 case DataType.DataTypeIntNullable: return value.iValueNullable;
                 case DataType.DataTypeLongNullable: return value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (long?)value.ulValueNullable;
@@ -2773,6 +3524,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (ulong?)value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return (ulong?)value.dValue;
+                case DataType.DataTypeDecimal: return (ulong?)value.mValue;
                 case DataType.DataTypeIntNullable: return (ulong?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (ulong?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return value.ulValueNullable;
@@ -2819,6 +3571,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return value.dValue;
+                case DataType.DataTypeDecimal: return (double?)value.mValue;
                 case DataType.DataTypeIntNullable: return value.iValueNullable;
                 case DataType.DataTypeLongNullable: return value.lValueNullable;
                 case DataType.DataTypeULongNullable: return value.ulValueNullable;
@@ -2865,6 +3618,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue;
                 case DataType.DataTypeULong: return value.ulValue;
                 case DataType.DataTypeDouble: return (float?)value.dValue;
+                case DataType.DataTypeDecimal: return (float?)value.mValue;
                 case DataType.DataTypeIntNullable: return value.iValueNullable;
                 case DataType.DataTypeLongNullable: return value.lValueNullable;
                 case DataType.DataTypeULongNullable: return value.ulValueNullable;
@@ -2911,6 +3665,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return (char?)value.lValue;
                 case DataType.DataTypeULong: return (char?)value.ulValue;
                 case DataType.DataTypeDouble: return (char?)value.dValue;
+                case DataType.DataTypeDecimal: return (char?)value.mValue;
                 case DataType.DataTypeIntNullable: return (char?)value.iValueNullable;
                 case DataType.DataTypeLongNullable: return (char?)value.lValueNullable;
                 case DataType.DataTypeULongNullable: return (char?)value.ulValueNullable;
@@ -2967,6 +3722,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue > 0;
                 case DataType.DataTypeULong: return value.ulValue > 0;
                 case DataType.DataTypeDouble: return value.dValue > 0;
+                case DataType.DataTypeDecimal: return value.mValue > 0;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeBooleanNullable: return value.bValueNullable != null && value.bValueNullable.Value;
                 case DataType.DataTypeIntNullable: return value.iValueNullable != null && value.iValueNullable.Value > 0;
@@ -3007,6 +3763,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: return value.lValue > 0;
                 case DataType.DataTypeULong: return value.ulValue > 0;
                 case DataType.DataTypeDouble: return value.dValue > 0;
+                case DataType.DataTypeDecimal: return value.mValue > 0;
                 case DataType.DataTypeBooleanNullable: return value.bValueNullable;
                 case DataType.DataTypeIntNullable: if (value.iValueNullable != null) return value.iValueNullable.Value > 0; else return null;
                 case DataType.DataTypeLongNullable: if (value.lValueNullable != null) return value.lValueNullable.Value > 0; else return null;
@@ -3058,6 +3815,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: stream.Write(value.lValue); break;
                 case DataType.DataTypeULong: stream.Write(value.ulValue); break;
                 case DataType.DataTypeDouble: stream.Write(value.dValue); break;
+                case DataType.DataTypeDecimal: stream.Write(value.mValue); break;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeBooleanNullable: stream.Write(value.bValueNullable); break;
                 case DataType.DataTypeIntNullable: stream.Write(value.iValueNullable); break;
@@ -3105,6 +3863,7 @@ namespace CSharpLike
                 case DataType.DataTypeLong: stream.Read(out value.lValue); break;
                 case DataType.DataTypeULong: stream.Read(out value.ulValue); break;
                 case DataType.DataTypeDouble: stream.Read(out value.dValue); break;
+                case DataType.DataTypeDecimal: stream.Read(out value.mValue); break;
 #if SUPPORT_NULLABLE
                 case DataType.DataTypeBooleanNullable: stream.Read(out value.bValueNullable); break;
                 case DataType.DataTypeIntNullable: stream.Read(out value.iValueNullable); break;

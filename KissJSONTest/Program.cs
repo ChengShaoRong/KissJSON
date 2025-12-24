@@ -204,6 +204,19 @@ namespace KissJSONTest
                 Console.WriteLine($"Test Dictionary3:{one.Key}={one.Value}");
             }
 
+            //The below 5 dictionary values are same:
+            Dictionary<string, int> dic1 = new JSONData() { { "aa", 1 }, { "bb", 2 } };//Normal dictionary type JSONData initialization
+            Dictionary<string, int> dic2 = (JSONData)"{\"aa\":1,\"bb\":2}";//Normal JSON string convert to Dictionary
+            Dictionary<string, int> dic3 = (JSONData)"aa_1|bb_2";//The string split with `|` and `_`, convert to Dictionary
+            Dictionary<string, int> dic4 = (JSONData)"aa,1,bb,2";//The string split with `,`, convert to Dictionary
+            Dictionary<string, int> dic5 = new Dictionary<string, int>() { { "aa", 1 }, { "bb", 2 } };//Normal dictionary initialization
+
+            //The below 5 list values are same:
+            List<int> list1 = new JSONData() { 1, 2, 3 };//Normal list type JSONData initialization
+            List<int> list2 = (JSONData)"[1,2,3]";//Normal JSON string convert to List
+            List<int> list3 = (JSONData)"1,2,3";//The string split with `,`, convert to List
+            List<int> list4 = (JSONData)"1|2|3";//The string split with `|`, convert to List
+            List<int> list5 = new List<int>() { 1, 2, 3 };//Normal list initialization
             Console.ReadKey();
         }
     }

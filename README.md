@@ -336,6 +336,19 @@ Not formatting JSON string:
 	///JSON string
 	JSONData i = KissJson.ToJSONData("{\"a\":1}");
 
+	///Specail string
+	///1 JSON Format string, that JSON object can convert to List or Dictionary
+	List<int> list2 = (JSONData)"[1,2,3]";//Normal JSON string convert to List
+	Dictionary<string, int> dic2 = (JSONData)"{\"aa\":1,\"bb\":2}";//Normal JSON string convert to Dictionary
+	///2 The string split with `,`, that JSON object can convert to List
+	List<int> list3 = (JSONData)"1,2,3";//The string split with `,`, convert to List
+	///3 The string split with `|`, that JSON object can convert to List
+	List<int> list4 = (JSONData)"1|2|3";//The string split with `|`, convert to List
+	///4 The string split with `|` and `_`, that JSON object can convert to Dictionary
+	Dictionary<string, int> dic3 = (JSONData)"aa_1|bb_2";//The string split with `|` and `_`, convert to Dictionary
+	///5 The string split with `,`, that JSON object can convert to Dictionary
+	Dictionary<string, int> dic4 = (JSONData)"aa,1,bb,2";//The string split with `,`, convert to Dictionary
+
 	///Binary JSON file or normal text JSON file using UTF8 format (Regardless of whether BOM is included or not)
 	JSONData j = KissJson.ToJSONData(File.ReadAllBytes("123.json"));
 
@@ -376,6 +389,23 @@ Not formatting JSON string:
 	JSONData i = 1;
 	foreach(JSONData item in i)//This line will throw an exception during runtime
 		Console.WriteLine($"Crash:{item}");
+```
+
+>*  JSONData object convert to List or Dictionary
+```
+    //The below 5 dictionary values are same:
+    Dictionary<string, int> dic1 = new JSONData() { { "aa", 1 }, { "bb", 2 } };//Normal dictionary type JSONData initialization
+    Dictionary<string, int> dic2 = (JSONData)"{\"aa\":1,\"bb\":2}";//Normal JSON string convert to Dictionary
+    Dictionary<string, int> dic3 = (JSONData)"aa_1|bb_2";//The string split with `|` and `_`, convert to Dictionary
+    Dictionary<string, int> dic4 = (JSONData)"aa,1,bb,2";//The string split with `,`, convert to Dictionary
+    Dictionary<string, int> dic5 = new Dictionary<string, int>() { { "aa", 1 }, { "bb", 2 } };//Normal dictionary initialization
+
+    //The below 5 list values are same:
+    List<int> list1 = new JSONData() { 1, 2, 3 };//Normal list type JSONData initialization
+    List<int> list2 = (JSONData)"[1,2,3]";//Normal JSON string convert to List
+    List<int> list3 = (JSONData)"1,2,3";//The string split with `,`, convert to List
+    List<int> list4 = (JSONData)"1|2|3";//The string split with `|`, convert to List
+    List<int> list5 = new List<int>() { 1, 2, 3 };//Normal list initialization
 ```
 
 ***
@@ -698,6 +728,19 @@ Not formatting JSON string:
 	///JSON字符串
 	JSONData i = KissJson.ToJSONData("{\"a\":1}");
 
+	///特殊字符串
+	///1 JSON格式的字符串,该字符串转换的JSON对象可以转为列表或字典
+	List<int> list2 = (JSONData)"[1,2,3]";//普通的JSON格式字符串转为列表
+	Dictionary<string, int> dic2 = (JSONData)"{\"aa\":1,\"bb\":2}";//普通的JSON格式字符串转为字典
+	///2 以逗号`,`分割的字符串,该字符串转换的JSON对象可以转为列表
+	List<int> list3 = (JSONData)"1,2,3";//由逗号`,`分割的字符串转为列表
+	///3 以竖线`|`分割的字符串,该字符串转换的JSON对象可以转为列表
+	List<int> list4 = (JSONData)"1|2|3";//由竖线`|`分割的字符串转为列表
+	///4 以竖线`|`和下滑`_`分割的字符串,该字符串转换的JSON对象可以转为字典
+	Dictionary<string, int> dic3 = (JSONData)"aa_1|bb_2";//由竖线`|`和下滑`_`分割的字符串转为字典
+	///5 以逗号`,`分割的字符串,该字符串转换的JSON对象可以转为字典
+	Dictionary<string, int> dic4 = (JSONData)"aa,1,bb,2";//由逗号`,`分割的字符串转为字典
+
 	///二进制JSON文件或普通UTF8格式JSON文件(无论是否带BOM)
 	JSONData j = KissJson.ToJSONData(File.ReadAllBytes("123.json"));
 
@@ -738,4 +781,21 @@ Not formatting JSON string:
 	JSONData i = 1;
 	foreach(JSONData item in i)//这行在运行时会抛出异常
 		Console.WriteLine($"Crash:{item}");
+```
+
+>*  JSONData对象转为列表或字典
+```
+    //以下5个字典的数值完全相同:
+    Dictionary<string, int> dic1 = new JSONData() { { "aa", 1 }, { "bb", 2 } };//普通的字典类型JSON对象初始化
+    Dictionary<string, int> dic2 = (JSONData)"{\"aa\":1,\"bb\":2}";//普通的JSON格式字符串转为字典
+    Dictionary<string, int> dic3 = (JSONData)"aa_1|bb_2";//由竖线`|`和下滑`_`分割的字符串转为字典
+    Dictionary<string, int> dic4 = (JSONData)"aa,1,bb,2";//由逗号`,`分割的字符串转为字典
+    Dictionary<string, int> dic5 = new Dictionary<string, int>() { { "aa", 1 }, { "bb", 2 } };//普通的字典初始化
+
+    //以下5个列表的数值完全相同:
+    List<int> list1 = new JSONData() { 1, 2, 3 };//普通的列表类型JSON对象初始化
+    List<int> list2 = (JSONData)"[1,2,3]";//普通的JSON格式字符串转为列表
+    List<int> list3 = (JSONData)"1,2,3";//由逗号`,`分割的字符串转为列表
+    List<int> list4 = (JSONData)"1|2|3";//由竖线`|`分割的字符串转为列表
+    List<int> list5 = new List<int>() { 1, 2, 3 };//普通的列表初始化
 ```
