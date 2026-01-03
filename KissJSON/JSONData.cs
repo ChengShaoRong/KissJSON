@@ -144,7 +144,7 @@ namespace CSharpLike
         /// <br/><br/>Chinese:<br/>封包类型为整数还是字符串.默认为字符串,方便日志里查看. 用于函数`NewPacket`
         /// </summary>
         public static bool packetIsInteger = false;
-#if !_CSHARP_LIKE_ //That prevent you call this from hot update script
+#if !UNITY_TEAM_LICENSE //That prevent you call this from hot update script
         /// <summary>
         /// Create a JSONData with packet type for network packet, that use in NONE hot update script.
         /// <br/><br/>Chinese:<br/>创建一个JSON对象用于网络封包,用于非热更新代码的
@@ -198,7 +198,7 @@ namespace CSharpLike
                 return this["packetType"];
             return (int)Enum.Parse(type, this["packetType"]);
         }
-#if _CSHARP_LIKE_
+#if UNITY_TEAM_LICENSE
         public static JSONData NewPacket(Internal.SType type, object value)
         {
             JSONData data = new JSONData();
