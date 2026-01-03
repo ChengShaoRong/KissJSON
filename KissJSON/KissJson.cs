@@ -10,7 +10,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
 using CSharpLike.Internal;
 #endif
 using System.Reflection;
@@ -181,7 +181,7 @@ namespace CSharpLike
             Dictionary<string, object> cache = new Dictionary<string, object>();
             JSONData table;
             Type type;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             SType stype;
             public _ExcelData_(SType type, JSONData json) : this(json)
             {
@@ -200,7 +200,7 @@ namespace CSharpLike
                         jsonDic[Headers[i]] = json[i];
                     if (type != null)
                         value = ToObject(type, jsonDic);
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
                     else if (stype != null)
                         value = ToObject(stype, jsonDic);
 #endif
@@ -256,7 +256,7 @@ namespace CSharpLike
             if (fileName == null) excelDatas.Clear();
             else excelDatas.Remove(fileName);
         }
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
         /// <summary>
         /// Clear Excel data by SType
         /// </summary>
@@ -338,7 +338,7 @@ namespace CSharpLike
         /// <param name="type">Type of Excel data. e.g. typeof(ItemJSON)<br/><br/>Chinese:<br/>绑定的Excel类型,例如typeof(ItemJSON)</param>
         /// <param name="json">Source KissJSON object that load from Excel file<br/><br/>Chinese:<br/>已经转为JSON对象的Excel文件</param>
         public static void Load(Type type, JSONData json) => excelDatas[type.Name] = new _ExcelData_(type, json);
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
         /// <summary>
         /// Asynchronous load all Excel data by Type.
         /// </summary>
@@ -376,7 +376,7 @@ namespace CSharpLike
         public static void Load(object type, JSONData json)
         {
             if (type == null) return;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type is SType) { Load(type as SType, json); return; }
 #endif
             Load(type as Type, json);
@@ -389,7 +389,7 @@ namespace CSharpLike
         /// <param name="fileName">Excel file name<br/><br/>Chinese:<br/>Excel文件名</param>
         public static void Load(object type, string fileName)
         {
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             DateTime startTime = DateTime.Now;
 #if UNITY_EDITOR
             if (File.Exists(fileName))
@@ -439,7 +439,7 @@ namespace CSharpLike
         public static object Get(object type, string strUniqueKey)
         {
             if (type == null) return null;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type is SType) return Get(type as SType, strUniqueKey);
 #endif
             return Get(type as Type, strUniqueKey);
@@ -457,7 +457,7 @@ namespace CSharpLike
         public static void Clear(object type)
         {
             if (type == null) { excelDatas.Clear(); return; }
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type is SType) { Clear(type as SType); return; }
 #endif
             Clear(type as Type);
@@ -470,7 +470,7 @@ namespace CSharpLike
         public static List<string> GetKeys(object type)
         {
             if (type == null) return new List<string>();
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type is SType) return GetKeys(type as SType);
 #endif
             return GetKeys(type as Type);
@@ -483,7 +483,7 @@ namespace CSharpLike
         public static List<string> GetHeaders(object type)
         {
             if (type == null) return new List<string>();
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type is SType) return GetKeys(type as SType);
 #endif
             return GetKeys(type as Type);
@@ -546,7 +546,7 @@ namespace CSharpLike
         {
             return ToJSONData(ToJson(obj));
         }
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
         public static JSONData ToJSONData(SInstance obj)
         {
             return ToJSONData(ToJson(obj));
@@ -562,7 +562,7 @@ namespace CSharpLike
             if (obj == null)
                 return "{}";
             Type type = obj.GetType();
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (type == typeof(SInstance))
                 return ToJson(obj as SInstance);
 #endif
@@ -583,7 +583,7 @@ namespace CSharpLike
                     if (!IgnoreNull)
                     {
                         Type t = f.FieldType;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
                         if (t == typeof(SInstance))
                         {
                             SType st = HotUpdateManager.vm.GetTypeByKeyword(t.FullName).type;
@@ -595,7 +595,7 @@ namespace CSharpLike
 #endif
                             if (t.IsDefined(typeof(KissJsonDontSerialize)))
                                 continue;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
                         }
 #endif
                         sb.AppendFormat("\"{0}\":null,", f.Name);
@@ -908,7 +908,7 @@ namespace CSharpLike
                     if (!IgnoreNull)
                     {
                         Type t = f.PropertyType;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
                         if (t == typeof(SInstance))
                         {
                             SType st = HotUpdateManager.vm.GetTypeByKeyword(t.FullName).type;
@@ -920,7 +920,7 @@ namespace CSharpLike
 #endif
                         if (t.IsDefined(typeof(KissJsonDontSerialize)))
                             continue;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
                         }
 #endif
                         sb.AppendFormat("\"{0}\":null,", f.Name);
@@ -1350,7 +1350,7 @@ namespace CSharpLike
             return null;
         }
         #region Internal implementation
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
         public static object ToObject(SType type, string strJSON)
         {
             return ToObject(type, ToJSONData(strJSON));
@@ -1656,7 +1656,7 @@ namespace CSharpLike
         /// <param name="key">The value of '_uid_', default null mean all cache.<br/><br/>Chinese:<br/>JSON对象里'_uid_'的值.如果传入null表示全部</param>
         public static void ClearCache(string key = null)
         {
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             if (key != null)
             {
                 cacheObjects.Remove(key);
@@ -2099,7 +2099,7 @@ namespace CSharpLike
         {
             if (obj == null)
                 return true;
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
             SInstance sObj = obj as SInstance;
             if (sObj != null)
             {
@@ -2174,7 +2174,7 @@ namespace CSharpLike
             }
             return bRet;
         }
-#if UNITY_TEAM_LICENSE
+#if UNITY_2020_1_OR_NEWER
         public static string ToJson(SInstance obj)
         {
             if (obj == null || obj.type.IsDefined("CSharpLike.KissJsonDontSerialize"))
